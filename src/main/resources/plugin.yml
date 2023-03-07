@@ -1,0 +1,11 @@
+name: RowMissles
+version: '${project.version}'
+main: me.rownox.rowmissles.RowMissles
+api-version: 1.19
+commands:
+  missiles:
+    usage: "/missiles"
+    description: "Access all of the missiles."
+    aliases:
+      - nukes
+      - bombs
