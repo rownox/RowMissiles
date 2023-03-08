@@ -5,4 +5,4 @@ missile1:
   radius: 35
   speed: 50
   nuclear: true
-  guiSlot: 11
+  gui_slot: 11

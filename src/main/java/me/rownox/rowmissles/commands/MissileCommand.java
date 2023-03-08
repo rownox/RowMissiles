@@ -1,5 +1,6 @@
-package me.rownox.rowmissles.missiles;
+package me.rownox.rowmissles.commands;
 
+import me.rownox.rowmissles.guis.MissileGui;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

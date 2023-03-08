@@ -1,4 +1,4 @@
-package me.rownox.rowmissles.missiles;
+package me.rownox.rowmissles.objects;
 
 import org.bukkit.Material;
 
