@@ -28,7 +28,7 @@ public class EventListener implements Listener {
         if (p.getGameMode() != GameMode.SURVIVAL) return;
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
-        for (Missile missile : RowMissiles.missileList) {
+        for (Missile missile : RowMissiles.missileList.keySet()) {
             if (missile.getMaterial().equals(item)) {
                 Block b = e.getClickedBlock();
                 if (b == null) return;

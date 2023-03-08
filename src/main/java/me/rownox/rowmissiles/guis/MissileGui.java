@@ -27,15 +27,15 @@ public class MissileGui implements Listener {
     }
 
     private void addItems() {
-        for (Missile m : RowMissiles.missileList) {
-            ItemStack item = new ItemStack(m.getMaterial());
+        for (Missile missile : RowMissiles.missileList.keySet()) {
+            ItemStack item = new ItemStack(missile.getMaterial());
             ItemMeta itemMeta = item.getItemMeta();
 
-            itemMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + m.getName());
-            itemMeta.setLore(m.getLore());
+            itemMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + missile.getName());
+            itemMeta.setLore(missile.getLore());
             item.setItemMeta(itemMeta);
 
-            gui.setItem(m.getGuiSlot(), item);
+            gui.setItem(missile.getGuiSlot(), item);
         }
     }
 

@@ -3,12 +3,12 @@ package me.rownox.rowmissiles.utils;
 import me.rownox.rowmissiles.RowMissiles;
 import me.rownox.rowmissiles.objects.Missile;
 import me.rownox.rowmissiles.objects.PlayerValues;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import javax.annotation.Nullable;
@@ -23,13 +23,10 @@ public class MissileUtils {
         Set<String> keys = config.getKeys(false);
         for (String key : keys) {
             String translationKey = config.getString(key + ".material");
-            Material material = Material.ARROW;
+            Material material = Material.STONE;
 
-            if (translationKey != null) {
-                if (Material.matchMaterial(translationKey) != null) {
-                    material = Material.valueOf(translationKey)
-                }
-            }
+//            String recipeString = config.getString(key + ".recipe");
+//            String[] parts = recipeString.split(" ");
 
             String name = config.getString(key + ".name");
             int range = config.getInt(key + ".range");
@@ -37,7 +34,12 @@ public class MissileUtils {
             int speed = config.getInt(key + ".speed");
             boolean nuclear = config.getBoolean(key + ".nuclear");
             int guiSlot = config.getInt(key + ".gui_slot");
-            List<String> = 
+
+            if (translationKey != null) {
+                if (Material.matchMaterial(translationKey) != null) {
+                    material = Material.valueOf(translationKey);
+                }
+            }
 
             List<String> lore = List.of(
                     "Range: " + range,
@@ -46,7 +48,22 @@ public class MissileUtils {
                     "Nuclear: " + nuclear
             );
 
-            RowMissiles.missileList.add(new Missile(name, lore, material, range, radius, speed, nuclear, guiSlot));
+            ItemStack item = new ItemStack(material);
+            ItemMeta itemMeta = item.getItemMeta();
+
+            itemMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + name);
+            itemMeta.setLore(lore);
+            item.setItemMeta(itemMeta);
+
+            NamespacedKey namespacedKey = new NamespacedKey(RowMissiles.getInstance(), name);
+            ShapedRecipe recipe = new ShapedRecipe(namespacedKey, item);
+//
+//            recipe.shape(parts);
+//            for (String str : parts) {
+//                recipe.setIngredient(str, Material.STONE);
+//            }
+
+            RowMissiles.missileList.put(new Missile(name, lore, material, range, radius, speed, nuclear, guiSlot), recipe);
         }
     }
 
