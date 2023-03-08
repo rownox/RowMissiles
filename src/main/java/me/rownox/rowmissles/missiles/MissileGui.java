@@ -3,6 +3,7 @@ package me.rownox.rowmissles.missiles;
 import me.rownox.rowmissles.RowMissles;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,11 +20,11 @@ public class MissileGui implements Listener {
         p.openInventory(gui);
 
         gui = Bukkit.createInventory(p, 9*3, ChatColor.RED + "" + ChatColor.BOLD + "Missiles");
-
+        fill();
+        addItems();
     }
 
     private void addItems() {
-        int x = 11;
         for (Missile m : RowMissles.missileList) {
             ItemStack item = new ItemStack(m.getMaterial());
             ItemMeta itemMeta = item.getItemMeta();
@@ -32,8 +33,18 @@ public class MissileGui implements Listener {
             itemMeta.setLore(m.getLore());
             item.setItemMeta(itemMeta);
 
-            gui.setItem(x, item);
-            x++;
+            gui.setItem(m.getGuiSlot(), item);
+        }
+    }
+
+    private void fill() {
+        ItemStack pane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta paneMeta = pane.getItemMeta();
+        paneMeta.setDisplayName(ChatColor.BLACK + " ");
+        pane.setItemMeta(paneMeta);
+
+        for (int i = 0; i < gui.getSize(); i++) {
+            gui.setItem(i, pane);
         }
     }
 
@@ -41,7 +52,7 @@ public class MissileGui implements Listener {
     private void onInventoryClick(InventoryClickEvent e) {
         if (e.getWhoClicked() instanceof Player p) {
             if (e.getClickedInventory() == gui) {
-
+                e.setCancelled(true);
             }
         }
     }
