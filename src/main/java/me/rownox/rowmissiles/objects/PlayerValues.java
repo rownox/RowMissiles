@@ -1,6 +1,4 @@
-package me.rownox.rowmissles.objects;
-
-import org.bukkit.entity.Player;
+package me.rownox.rowmissiles.objects;
 
 public class PlayerValues {
 

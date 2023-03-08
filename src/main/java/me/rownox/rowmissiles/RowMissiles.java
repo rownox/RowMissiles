@@ -1,10 +1,10 @@
-package me.rownox.rowmissles;
+package me.rownox.rowmissiles;
 
-import me.rownox.rowmissles.listeners.EventListener;
-import me.rownox.rowmissles.objects.Missile;
-import me.rownox.rowmissles.commands.MissileCommand;
-import me.rownox.rowmissles.objects.PlayerValues;
-import me.rownox.rowmissles.utils.MissileUtils;
+import me.rownox.rowmissiles.listeners.EventListener;
+import me.rownox.rowmissiles.objects.Missile;
+import me.rownox.rowmissiles.commands.MissileCommand;
+import me.rownox.rowmissiles.objects.PlayerValues;
+import me.rownox.rowmissiles.utils.MissileUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

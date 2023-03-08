@@ -1,8 +1,8 @@
-package me.rownox.rowmissles.utils;
+package me.rownox.rowmissiles.utils;
 
-import me.rownox.rowmissles.RowMissiles;
-import me.rownox.rowmissles.objects.Missile;
-import me.rownox.rowmissles.objects.PlayerValues;
+import me.rownox.rowmissiles.RowMissiles;
+import me.rownox.rowmissiles.objects.Missile;
+import me.rownox.rowmissiles.objects.PlayerValues;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +26,9 @@ public class MissileUtils {
             Material material = Material.ARROW;
 
             if (translationKey != null) {
-                material = Material.matchMaterial(translationKey);
+                if (Material.matchMaterial(translationKey) != null) {
+                    material = Material.matchMaterial(translationKey);
+                }
             }
 
             String name = config.getString(key + ".name");

@@ -1,7 +1,7 @@
-package me.rownox.rowmissles.guis;
+package me.rownox.rowmissiles.guis;
 
-import me.rownox.rowmissles.RowMissiles;
-import me.rownox.rowmissles.objects.Missile;
+import me.rownox.rowmissiles.RowMissiles;
+import me.rownox.rowmissiles.objects.Missile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,13 +18,12 @@ public class MissileGui implements Listener {
     Inventory gui;
 
     public MissileGui(Player p) {
-        p.openInventory(gui);
-
         int rows = RowMissiles.config.getInt("gui_rows");
 
         gui = Bukkit.createInventory(p, 9 * rows, ChatColor.RED + "" + ChatColor.BOLD + "Missiles");
         fill();
         addItems();
+        p.openInventory(gui);
     }
 
     private void addItems() {

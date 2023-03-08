@@ -1,8 +1,8 @@
 missile1:
   name: "missile_name"
-  material: "item.minecraft.tipped_arrow.effect.night_vision"
+  material: "ARROW:2"
   range: 5000
   radius: 35
   speed: 50
   nuclear: true
-  gui_slot: 11
+  gui_slot: 10

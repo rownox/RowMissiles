@@ -1,50 +1,56 @@
-package me.rownox.rowmissles.listeners;
+package me.rownox.rowmissiles.listeners;
 
-import me.rownox.rowmissles.RowMissiles;
-import me.rownox.rowmissles.objects.PlayerValues;
-import me.rownox.rowmissles.utils.MissileUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import me.rownox.rowmissiles.RowMissiles;
+import me.rownox.rowmissiles.objects.Missile;
+import me.rownox.rowmissiles.objects.PlayerValues;
+import me.rownox.rowmissiles.utils.MissileUtils;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Dispenser;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 public class EventListener implements Listener {
     @EventHandler
     private void onInteract(PlayerInteractEvent e) {
-        Block b = e.getClickedBlock();
-        BlockData blockData = b.getBlockData();
         Player p = e.getPlayer();
+        Material item = p.getInventory().getItemInMainHand().getType();
 
-        if (b.getType().equals(Material.DISPENSER)) {
-            if (blockData instanceof Directional directional) {
-                if (directional.getFacing() != BlockFace.UP) {
-                    p.sendMessage("The dispenser is not facing upward.");
-                    return;
-                }
-                p.sendMessage("You clicked a dispenser");
+        if (p.getGameMode() != GameMode.SURVIVAL) return;
+        if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
-                Block blockUnder = b.getRelative(BlockFace.DOWN);
-                Material material = blockUnder.getType();
+        for (Missile missile : RowMissiles.missileList) {
+            if (missile.getMaterial().equals(item)) {
+                Block b = e.getClickedBlock();
+                if (b == null) return;
+                BlockData blockData = b.getBlockData();
 
-                if (material == Material.CAULDRON) {
-                    Levelled cauldron = (Levelled) blockUnder.getBlockData();
-                    if (cauldron.getLevel() == cauldron.getMaximumLevel() && blockUnder.getRelative(BlockFace.DOWN).getType() == Material.LAVA) {
-                        cauldron.setLevel(0);
+                if (blockData instanceof Directional directional) {
+
+                    if (!b.getType().equals(Material.DISPENSER)) return;
+                    e.setCancelled(true);
+
+                    if (directional.getFacing() != BlockFace.UP) {
+                        p.sendMessage("The dispenser is not facing upward.");
+                        p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+                        return;
+                    }
+
+                    Block blockUnder = b.getLocation().subtract(0, 1, 0).getBlock();
+                    if (blockUnder.getType().equals(Material.LAVA_CAULDRON)) {
+                        blockUnder.setType(Material.CAULDRON);
                         MissileUtils.launchMissile(p, null);
                     } else {
-                        p.sendMessage("Please refuel your launcher with lava.");
+                        p.sendMessage(RowMissiles.prefix + ChatColor.YELLOW + "Fuel the launcher by placing a lava cauldron underneath the dispenser.");
                     }
                 }
             }
@@ -95,5 +101,12 @@ public class EventListener implements Listener {
 
             MissileUtils.launchMissile(p, new Location(p.getWorld(), x, y, z));
         }
+    }
+
+    @EventHandler
+    private void onJoin(PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+
+        RowMissiles.playerValues.put(p.getUniqueId(), new PlayerValues());
     }
 }

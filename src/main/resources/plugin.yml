@@ -1,6 +1,6 @@
-name: RowMissles
+name: RowMissiles
 version: '${project.version}'
-main: me.rownox.rowmissles.RowMissles
+main: me.rownox.rowmissiles.RowMissiles
 api-version: 1.19
 commands:
   missiles:

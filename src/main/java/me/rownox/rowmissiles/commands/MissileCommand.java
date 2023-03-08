@@ -1,6 +1,6 @@
-package me.rownox.rowmissles.commands;
+package me.rownox.rowmissiles.commands;
 
-import me.rownox.rowmissles.guis.MissileGui;
+import me.rownox.rowmissiles.guis.MissileGui;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +12,7 @@ public class MissileCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player p) {
             new MissileGui(p);
+            return true;
         }
         return false;
     }
