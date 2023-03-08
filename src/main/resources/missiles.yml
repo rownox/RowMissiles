@@ -6,3 +6,5 @@ missile1:
   speed: 50
   nuclear: true
   gui_slot: 10
+  recipe: "STONE, DIRT, STONE, DIRT, STONE, DIRT, STONE, DIRT, STONE"
+  recipe_count: "64, 1, 64, 1, 32, 1, 64, 64, 64"

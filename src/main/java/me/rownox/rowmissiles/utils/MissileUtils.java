@@ -27,7 +27,7 @@ public class MissileUtils {
 
             if (translationKey != null) {
                 if (Material.matchMaterial(translationKey) != null) {
-                    material = Material.matchMaterial(translationKey);
+                    material = Material.valueOf(translationKey)
                 }
             }
 
@@ -37,6 +37,7 @@ public class MissileUtils {
             int speed = config.getInt(key + ".speed");
             boolean nuclear = config.getBoolean(key + ".nuclear");
             int guiSlot = config.getInt(key + ".gui_slot");
+            List<String> = 
 
             List<String> lore = List.of(
                     "Range: " + range,

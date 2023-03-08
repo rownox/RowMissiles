@@ -25,7 +25,7 @@ public final class RowMissiles extends JavaPlugin {
 
     public static RowMissiles plugin;
 
-    public static List<Missile> missileList = new ArrayList<>();
+    public static WeakHashMap<Missile, ShapedRecipe> missileList = new WeakHashMap<>();
     public static WeakHashMap<UUID, PlayerValues> playerValues = new WeakHashMap<>();
     public static String prefix;
 
