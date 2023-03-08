@@ -52,10 +52,6 @@ public class MissileGui implements Listener {
 
     @EventHandler
     private void onInventoryClick(InventoryClickEvent e) {
-        if (e.getWhoClicked() instanceof Player p) {
-            if (e.getClickedInventory() == gui) {
-                e.setCancelled(true);
-            }
-        }
+        e.setCancelled(true);
     }
 }
