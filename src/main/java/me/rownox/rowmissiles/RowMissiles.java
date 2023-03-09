@@ -1,15 +1,17 @@
 package me.rownox.rowmissiles;
 
-import me.rownox.rowmissiles.commands.MissileCommand;
-import me.rownox.rowmissiles.listeners.Chat;
-import me.rownox.rowmissiles.listeners.Interact;
-import me.rownox.rowmissiles.listeners.Join;
-import me.rownox.rowmissiles.objects.Missile;
-import me.rownox.rowmissiles.objects.PlayerValues;
+import me.rownox.rowmissiles.commands.MissileCmd;
+import me.rownox.rowmissiles.listeners.ChatListener;
+import me.rownox.rowmissiles.listeners.InteractListener;
+import me.rownox.rowmissiles.listeners.JoinListener;
+import me.rownox.rowmissiles.objects.MissileObject;
+import me.rownox.rowmissiles.objects.PlayerValuesObject;
 import me.rownox.rowmissiles.utils.MissileUtils;
+import org.bukkit.Server;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,8 +29,8 @@ public final class RowMissiles extends JavaPlugin {
 
     public static RowMissiles plugin;
 
-    public static HashMap<Missile, ShapedRecipe> missileList = new HashMap<>();
-    public static WeakHashMap<UUID, PlayerValues> playerValues = new WeakHashMap<>();
+    public static HashMap<MissileObject, ShapedRecipe> missileList = new HashMap<>();
+    public static WeakHashMap<UUID, PlayerValuesObject> playerValues = new WeakHashMap<>();
     public static String prefix;
 
     @Override
@@ -55,10 +57,10 @@ public final class RowMissiles extends JavaPlugin {
 
         prefix = config.getString("prefix");
 
-        plugin.getCommand("missiles").setExecutor(new MissileCommand());
-        getServer().getPluginManager().registerEvents(new Chat(), this);
-        getServer().getPluginManager().registerEvents(new Join(), this);
-        getServer().getPluginManager().registerEvents(new Interact(), this);
+        plugin.getCommand("missiles").setExecutor(new MissileCmd());
+        getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(), this);
+        getServer().getPluginManager().registerEvents(new InteractListener(), this);
 
         MissileUtils.initMissiles();
     }
@@ -69,6 +71,10 @@ public final class RowMissiles extends JavaPlugin {
 
     public static RowMissiles getInstance() {
         return plugin;
+    }
+
+    public static void registerExternalListener(Listener listener, Server server) {
+        server.getPluginManager().registerEvents(listener, getInstance());
     }
 
 }

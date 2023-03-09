@@ -1,7 +1,7 @@
 package me.rownox.rowmissiles.utils;
 
 import me.rownox.rowmissiles.RowMissiles;
-import me.rownox.rowmissiles.objects.Missile;
+import me.rownox.rowmissiles.objects.MissileObject;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -66,7 +66,7 @@ public class MissileUtils {
 //                recipe.setIngredient(str, Material.STONE);
 //            }
 
-            RowMissiles.missileList.put(new Missile(name, lore, arrowItem, arrowMaterial, range, radius, speed, nuclear, guiSlot), recipe);
+            RowMissiles.missileList.put(new MissileObject(name, lore, arrowItem, arrowMaterial, range, radius, speed, nuclear, guiSlot), recipe);
         }
     }
 }

@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class Missile {
+public class MissileObject {
 
     private final String name;
     private final List<String> lore;
@@ -23,7 +23,7 @@ public class Missile {
     private final boolean nuclear;
     private final int guiSlot;
 
-    public Missile(String name, List<String> lore, ItemStack item, Material material, int range, int radius, int speed, boolean radioactive, int guiSlot) {
+    public MissileObject(String name, List<String> lore, ItemStack item, Material material, int range, int radius, int speed, boolean radioactive, int guiSlot) {
         this.name = name;
         this.lore = lore;
         this.item = item;
@@ -58,7 +58,7 @@ public class Missile {
     public int getGuiSlot() { return guiSlot; }
 
     public void launch(Player p, @Nullable Location target, Block b) {
-        PlayerValues pValues = RowMissiles.playerValues.get(p.getUniqueId());
+        PlayerValuesObject pValues = RowMissiles.playerValues.get(p.getUniqueId());
 
         if (pValues.isReadyToLaunch()) {
             for (Player op : Bukkit.getOnlinePlayers()) {

@@ -1,8 +1,8 @@
 package me.rownox.rowmissiles.listeners;
 
 import me.rownox.rowmissiles.RowMissiles;
-import me.rownox.rowmissiles.objects.Missile;
-import me.rownox.rowmissiles.objects.PlayerValues;
+import me.rownox.rowmissiles.objects.MissileObject;
+import me.rownox.rowmissiles.objects.PlayerValuesObject;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -11,15 +11,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class Chat implements Listener {
+public class ChatListener implements Listener {
     @EventHandler
     private void onChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
-        PlayerValues pValues = RowMissiles.playerValues.get(p.getUniqueId());
+        PlayerValuesObject pValues = RowMissiles.playerValues.get(p.getUniqueId());
 
         if (pValues.isSettingLocation()) {
 
-            for (Missile missile : RowMissiles.missileList.keySet()) {
+            for (MissileObject missile : RowMissiles.missileList.keySet()) {
                 if (missile.getItem().equals(p.getInventory().getItemInMainHand())) {
                     e.setCancelled(true);
 

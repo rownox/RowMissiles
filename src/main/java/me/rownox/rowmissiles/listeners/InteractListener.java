@@ -1,8 +1,8 @@
 package me.rownox.rowmissiles.listeners;
 
 import me.rownox.rowmissiles.RowMissiles;
-import me.rownox.rowmissiles.objects.Missile;
-import me.rownox.rowmissiles.objects.PlayerValues;
+import me.rownox.rowmissiles.objects.MissileObject;
+import me.rownox.rowmissiles.objects.PlayerValuesObject;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -18,17 +18,17 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class Interact implements Listener {
+public class InteractListener implements Listener {
     @EventHandler
     private void onInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         ItemStack item = p.getInventory().getItemInMainHand();
-        PlayerValues pValues = RowMissiles.playerValues.get(p.getUniqueId());
+        PlayerValuesObject pValues = RowMissiles.playerValues.get(p.getUniqueId());
 
         if (p.getGameMode() != GameMode.SURVIVAL) return;
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
-        for (Missile missile : RowMissiles.missileList.keySet()) {
+        for (MissileObject missile : RowMissiles.missileList.keySet()) {
             if (missile.getItem().equals(item)) {
                 Block b = e.getClickedBlock();
                 if (b == null) return;

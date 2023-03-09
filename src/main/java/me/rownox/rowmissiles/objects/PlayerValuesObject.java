@@ -2,13 +2,13 @@ package me.rownox.rowmissiles.objects;
 
 import org.bukkit.Location;
 
-public class PlayerValues {
+public class PlayerValuesObject {
 
     private boolean readyToLaunch;
     private boolean settingLocation;
     private Location targetLoc;
 
-    public PlayerValues() {
+    public PlayerValuesObject() {
         this.readyToLaunch = false;
         this.settingLocation = false;
         this.targetLoc = null;
