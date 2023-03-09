@@ -48,8 +48,8 @@ public class Chat implements Listener {
                     }
 
                     int highestY = p.getWorld().getHighestBlockYAt(new Location(p.getWorld(), x, 0, z));
-                    Location checkLoc = new Location(p.getWorld(), x, highestY, z);
-                    if (missile.getDistance(p.getLocation(), pValues.getTargetLoc()) > missile.getRange()) {
+                    Location targetLoc = new Location(p.getWorld(), x, highestY, z);
+                    if (missile.getDistance(p.getLocation(), targetLoc) > missile.getRange()) {
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&cThe coordinates you entered were out of missile range. Please re-enter them."));
                         return;
                     }
@@ -59,7 +59,7 @@ public class Chat implements Listener {
 
                     pValues.setSettingLocation(false);
                     pValues.setReadyToLaunch(true);
-                    pValues.setTargetLoc(checkLoc);
+                    pValues.setTargetLoc(targetLoc);
                 }
             }
         }
