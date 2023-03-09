@@ -1,7 +1,9 @@
 package me.rownox.rowmissiles;
 
 import me.rownox.rowmissiles.commands.MissileCommand;
-import me.rownox.rowmissiles.listeners.EventListener;
+import me.rownox.rowmissiles.listeners.Chat;
+import me.rownox.rowmissiles.listeners.Interact;
+import me.rownox.rowmissiles.listeners.Join;
 import me.rownox.rowmissiles.objects.Missile;
 import me.rownox.rowmissiles.objects.PlayerValues;
 import me.rownox.rowmissiles.utils.MissileUtils;
@@ -54,7 +56,9 @@ public final class RowMissiles extends JavaPlugin {
         prefix = config.getString("prefix");
 
         plugin.getCommand("missiles").setExecutor(new MissileCommand());
-        getServer().getPluginManager().registerEvents(new EventListener(), this);
+        getServer().getPluginManager().registerEvents(new Chat(), this);
+        getServer().getPluginManager().registerEvents(new Join(), this);
+        getServer().getPluginManager().registerEvents(new Interact(), this);
 
         MissileUtils.initMissiles();
     }

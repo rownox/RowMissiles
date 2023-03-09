@@ -20,11 +20,12 @@ public class MissileCommand implements CommandExecutor {
                 if (p.hasPermission("rowmissiles.give")) {
                     for (Missile missile : RowMissiles.missileList.keySet()) {
                         p.getInventory().addItem(missile.getItem());
-                        return true;
                     }
+                    return true;
                 }
             } else {
                 p.sendMessage("Commands: ", "/missiles", "/missiles give");
+                return true;
             }
         }
         return false;
