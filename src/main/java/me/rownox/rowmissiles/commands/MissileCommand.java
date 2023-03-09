@@ -7,7 +7,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class MissileCommand implements CommandExecutor {
 
@@ -20,7 +19,7 @@ public class MissileCommand implements CommandExecutor {
             } else if (args[0].equalsIgnoreCase("give")) {
                 if (p.hasPermission("rowmissiles.give")) {
                     for (Missile missile : RowMissiles.missileList.keySet()) {
-                        p.getInventory().addItem(new ItemStack(missile.getMaterial()));
+                        p.getInventory().addItem(missile.getItem());
                         return true;
                     }
                 }

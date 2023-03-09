@@ -1,6 +1,7 @@
 package me.rownox.rowmissiles.objects;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -8,6 +9,7 @@ public class Missile {
 
     private final String name;
     private final List<String> lore;
+    private final ItemStack item;
     private final Material material;
     private final int range;
     private final int radius;
@@ -15,9 +17,10 @@ public class Missile {
     private final boolean nuclear;
     private final int guiSlot;
 
-    public Missile(String name, List<String> lore, Material material, int range, int radius, int speed, boolean radioactive, int guiSlot) {
+    public Missile(String name, List<String> lore, ItemStack item, Material material, int range, int radius, int speed, boolean radioactive, int guiSlot) {
         this.name = name;
         this.lore = lore;
+        this.item = item;
         this.material = material;
         this.range = range;
         this.radius = radius;
@@ -32,9 +35,8 @@ public class Missile {
     public List<String> getLore() {
         return lore;
     }
-    public Material getMaterial() {
-        return material;
-    }
+    public ItemStack getItem() { return item; }
+    public Material getMaterial() { return material; }
     public int getRange() {
         return range;
     }

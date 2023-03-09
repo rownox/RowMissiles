@@ -9,9 +9,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import static org.bukkit.Bukkit.getServer;
 
 public class MissileGui implements Listener {
 
@@ -23,19 +26,15 @@ public class MissileGui implements Listener {
         gui = Bukkit.createInventory(p, 9 * rows, ChatColor.RED + "" + ChatColor.BOLD + "Missiles");
         fill();
         addItems();
+
+        getServer().getPluginManager().registerEvents(this, RowMissiles.getInstance());
+
         p.openInventory(gui);
     }
 
     private void addItems() {
         for (Missile missile : RowMissiles.missileList.keySet()) {
-            ItemStack item = new ItemStack(missile.getMaterial());
-            ItemMeta itemMeta = item.getItemMeta();
-
-            itemMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + missile.getName());
-            itemMeta.setLore(missile.getLore());
-            item.setItemMeta(itemMeta);
-
-            gui.setItem(missile.getGuiSlot(), item);
+            gui.setItem(missile.getGuiSlot(), missile.getItem());
         }
     }
 
@@ -52,6 +51,14 @@ public class MissileGui implements Listener {
 
     @EventHandler
     private void onInventoryClick(InventoryClickEvent e) {
-        e.setCancelled(true);
+        if (e.getInventory() == gui) {
+            e.setCancelled(true);
+        }
+    }
+    @EventHandler
+    private void onInventoryDrag(InventoryDragEvent e) {
+        if (e.getInventory() == gui) {
+            e.setCancelled(true);
+        }
     }
 }

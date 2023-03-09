@@ -1,8 +1,8 @@
 package me.rownox.rowmissiles;
 
+import me.rownox.rowmissiles.commands.MissileCommand;
 import me.rownox.rowmissiles.listeners.EventListener;
 import me.rownox.rowmissiles.objects.Missile;
-import me.rownox.rowmissiles.commands.MissileCommand;
 import me.rownox.rowmissiles.objects.PlayerValues;
 import me.rownox.rowmissiles.utils.MissileUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -13,8 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
@@ -26,7 +25,7 @@ public final class RowMissiles extends JavaPlugin {
 
     public static RowMissiles plugin;
 
-    public static WeakHashMap<Missile, ShapedRecipe> missileList = new WeakHashMap<>();
+    public static HashMap<Missile, ShapedRecipe> missileList = new HashMap<>();
     public static WeakHashMap<UUID, PlayerValues> playerValues = new WeakHashMap<>();
     public static String prefix;
 
@@ -54,10 +53,10 @@ public final class RowMissiles extends JavaPlugin {
 
         prefix = config.getString("prefix");
 
-        MissileUtils.initMissiles();
-
         plugin.getCommand("missiles").setExecutor(new MissileCommand());
         getServer().getPluginManager().registerEvents(new EventListener(), this);
+
+        MissileUtils.initMissiles();
     }
 
     public static YamlConfiguration getMissilesConfig() {

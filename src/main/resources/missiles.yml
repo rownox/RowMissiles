@@ -1,11 +1,12 @@
+# This is an example missile, all comments can be removed when creating a new one.
 missile1:
-  name: "missile_name"
-  material: "ARROW:2"
-  range: 5000
-  radius: 35
-  speed: 50
-  nuclear: true
-  gui_slot: 10
+  name: "missile_name" # This will show up in guis and in the player inventory.
+  material: "INSTANT_HEAL" # Here you can set what type of tipped arrow the missile is.
+  range: 5000 # This is the distance you need to be within from the target to launch your missile.
+  radius: 35 # This is the blast radius of the impact.
+  speed: 50 # This is how fast in blocks per second the missile will travel.
+  nuclear: true # Nuclear missiles leave behind lingering radiation damage.
+  gui_slot: 10 # The slot in the missile gui that this missile will show up in.
   recipe: "STONE, DIRT, STONE, DIRT, STONE, DIRT, STONE, DIRT, STONE"
   recipe_shape: "ABC DEF GHI"
   recipe_count: "64, 1, 64, 1, 32, 1, 64, 64, 64"
