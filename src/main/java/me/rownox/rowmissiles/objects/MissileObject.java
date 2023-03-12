@@ -91,6 +91,7 @@ public class MissileObject {
             firework.setFireworkMeta(meta);
 
             new BukkitRunnable() {
+                @Override
                 public void run() {
                     firework.detonate();
                 }
@@ -115,46 +116,52 @@ public class MissileObject {
         World world = p.getWorld();
 
         new BukkitRunnable() {
+            @Override
             public void run() {
                 for (Player op : Bukkit.getOnlinePlayers()) {
                     op.sendMessage(ChatColor.translateAlternateColorCodes('&',
                             RowMissiles.prefix + "&b&lThe bomb has blown up at &c&l" + (int) target.getX() + "&b&l, &c&l" + (int) target.getY() + "&b&l, &c&l" + (int) target.getZ()));
                     op.playSound(op.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2, 1);
                 }
-                if (isNuclear()) {
-                    new BukkitRunnable() {
-                        public void run() {
-                            if (isNuclear()) {
-                                for (Player op : Bukkit.getOnlinePlayers()) {
-                                    if (p.getLocation().distance(target) < magnitude) {
-                                        p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 2));
-                                    }
-                                }
-                            } else {
-                                cancel();
-                            }
-                        }
-                    }.runTaskTimer(RowMissiles.getInstance(), 20, 20*60);
-                }
+
                 int x, y, z;
                 for (int i = 0; i < 10; i++) {
                     int randomAngle = (int) (Math.random() * Math.PI * 2);
-                    int randomRadius = (int) (Math.random() * (magnitude*1.4));
+                    int randomRadius = (int) (Math.random() * (magnitude*1.3));
                     x = (int) (target.getX() + randomRadius * Math.cos(randomAngle));
                     z = (int) (target.getZ() + randomRadius * Math.sin(randomAngle));
                     y = target.getWorld().getHighestBlockYAt((int) x, (int) z);
                     Location clusterLocation = new Location(world, x,y,z);
-                    explode(clusterLocation, world, 1/5);
+                    explode(clusterLocation, world);
                 }
-                explode(target, world, 1);
+
+                if (isNuclear()) {
+                    duration = 150;
+                }
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (duration > 0) {
+                            for (Player op : Bukkit.getOnlinePlayers()) {
+                                if (p.getLocation().distance(target) < magnitude) {
+                                    p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 200, 2));
+                                    duration--;
+                                }
+                            }
+                        } else {
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(RowMissiles.getInstance(), 20, 20*10);
             }
         }.runTaskLater(RowMissiles.getInstance(), 20L * (time + 5));
     }
 
-    private void explode(Location target, World world, int modifier) {
+    private void explode(Location target, World world) {
         TNTPrimed bomb = (TNTPrimed) world.spawn(target, TNTPrimed.class);
-        bomb.setFuseTicks(10);
-        bomb.setYield(magnitude * modifier);
+        bomb.setFuseTicks(0);
+        bomb.setYield((float) (magnitude * 0.5));
     }
 
     public int getDistance(Location loc1, Location loc2) {
