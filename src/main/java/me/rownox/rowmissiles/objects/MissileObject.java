@@ -3,9 +3,11 @@ package me.rownox.rowmissiles.objects;
 import me.rownox.rowmissiles.RowMissiles;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -22,11 +24,11 @@ public class MissileObject {
     private final int range;
     private final int magnitude;
     private final int speed;
-    private final boolean cluster;
     private final boolean nuclear;
+    private int duration;
     private int guiSlot;
 
-    public MissileObject(ItemStack item, int range, int magnitude, int speed, boolean cluster, boolean nuclear) {
+    public MissileObject(ItemStack item, int range, int magnitude, int speed, boolean nuclear) {
         this.item = item;
         this.lore = item.getItemMeta().getLore();
         this.name = item.getItemMeta().getDisplayName();
@@ -34,7 +36,6 @@ public class MissileObject {
         this.range = range;
         this.magnitude = magnitude;
         this.speed = speed;
-        this.cluster = cluster;
         this.nuclear = nuclear;
         this.guiSlot = 0;
     }
@@ -56,7 +57,6 @@ public class MissileObject {
     public int getSpeed() {
         return speed;
     }
-    public boolean isCluster() { return cluster; }
     public boolean isNuclear() {
         return nuclear;
     }
@@ -75,6 +75,28 @@ public class MissileObject {
             pValues.setReadyToLaunch(false);
 
             p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
+
+            Firework firework = p.getWorld().spawn(b.getLocation().add(0, 2, 0), Firework.class);
+
+            FireworkMeta meta = firework.getFireworkMeta();
+            FireworkEffect effect = FireworkEffect.builder()
+                    .withColor(Color.WHITE)
+                    .withFade(Color.RED)
+                    .with(FireworkEffect.Type.BURST)
+                    .flicker(true)
+                    .trail(true)
+                    .build();
+            meta.addEffect(effect);
+            meta.setPower(10);
+            firework.setFireworkMeta(meta);
+
+            new BukkitRunnable() {
+                public void run() {
+                    firework.detonate();
+                }
+            }.runTaskLater(RowMissiles.getInstance(), 40);
+
+            p.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, b.getLocation().add(0.5, 0.5, 0.5), 3);
 
             land(p, target);
         } else {
@@ -99,24 +121,7 @@ public class MissileObject {
                             RowMissiles.prefix + "&b&lThe bomb has blown up at &c&l" + (int) target.getX() + "&b&l, &c&l" + (int) target.getY() + "&b&l, &c&l" + (int) target.getZ()));
                     op.playSound(op.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2, 1);
                 }
-                if (isCluster()) {
-                    int x, y, z;
-                    for (int i = 0; i < 4; i++) {
-                        int randomAngle = (int) (Math.random() * Math.PI * 2);
-                        int randomRadius = (int) (Math.random() * magnitude);
-                        x = (int) (target.getX() + randomRadius * Math.cos(randomAngle));
-                        z = (int) (target.getZ() + randomRadius * Math.sin(randomAngle));
-                        y = target.getWorld().getHighestBlockYAt((int) x, (int) z);
-                        Location clusterLocation = new Location(world, x,y,z);
-                        explode(clusterLocation, world);
-                    }
-                }
                 if (isNuclear()) {
-                    new BukkitRunnable() {
-                        public void run() {
-
-                        }
-                    }.runTaskLater(RowMissiles.getInstance(), 20*60*5);
                     new BukkitRunnable() {
                         public void run() {
                             if (isNuclear()) {
@@ -129,17 +134,27 @@ public class MissileObject {
                                 cancel();
                             }
                         }
-                    }.runTaskTimer(RowMissiles.getInstance(), 20, 100);
+                    }.runTaskTimer(RowMissiles.getInstance(), 20, 20*60);
                 }
-                explode(target, world);
+                int x, y, z;
+                for (int i = 0; i < 10; i++) {
+                    int randomAngle = (int) (Math.random() * Math.PI * 2);
+                    int randomRadius = (int) (Math.random() * (magnitude*1.4));
+                    x = (int) (target.getX() + randomRadius * Math.cos(randomAngle));
+                    z = (int) (target.getZ() + randomRadius * Math.sin(randomAngle));
+                    y = target.getWorld().getHighestBlockYAt((int) x, (int) z);
+                    Location clusterLocation = new Location(world, x,y,z);
+                    explode(clusterLocation, world, 1/5);
+                }
+                explode(target, world, 1);
             }
         }.runTaskLater(RowMissiles.getInstance(), 20L * (time + 5));
     }
 
-    private void explode(Location target, World world) {
+    private void explode(Location target, World world, int modifier) {
         TNTPrimed bomb = (TNTPrimed) world.spawn(target, TNTPrimed.class);
         bomb.setFuseTicks(10);
-        bomb.setYield(magnitude);
+        bomb.setYield(magnitude * modifier);
     }
 
     public int getDistance(Location loc1, Location loc2) {

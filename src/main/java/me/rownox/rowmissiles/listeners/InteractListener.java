@@ -3,20 +3,20 @@ package me.rownox.rowmissiles.listeners;
 import me.rownox.rowmissiles.RowMissiles;
 import me.rownox.rowmissiles.objects.MissileObject;
 import me.rownox.rowmissiles.objects.PlayerValuesObject;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class InteractListener implements Listener {
     @EventHandler
@@ -46,7 +46,7 @@ public class InteractListener implements Listener {
 
                     Block blockUnder = b.getLocation().subtract(0, 1, 0).getBlock();
                     if (blockUnder.getType().equals(Material.LAVA_CAULDRON)) {
-                        new MissileObject(MM.getItem(), MM.getRange(), MM.getMagnitude(), MM.getSpeed(), MM.isCluster(), MM.isNuclear()).launch(p, pValues.getTargetLoc(), blockUnder);
+                        new MissileObject(MM.getItem(), MM.getRange(), MM.getMagnitude(), MM.getSpeed(), MM.isNuclear()).launch(p, pValues.getTargetLoc(), blockUnder);
                     } else {
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&eFuel the launcher by placing a lava cauldron underneath the dispenser."));
                     }

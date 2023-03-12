@@ -30,7 +30,6 @@ public class ConfigUtils {
             int range = missilesConfig.getInt(key + ".range");
             int magnitude = missilesConfig.getInt(key + ".magnitude");
             int speed = missilesConfig.getInt(key + ".speed");
-            boolean cluster = missilesConfig.getBoolean(key + ".cluster");
             boolean nuclear = missilesConfig.getBoolean(key + ".nuclear");
             int guiSlot = missilesConfig.getInt(key + ".gui_slot");
 
@@ -52,7 +51,7 @@ public class ConfigUtils {
 
             ItemMeta itemMeta = arrowItem.getItemMeta();
             itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-            itemMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + name);
+            itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
             itemMeta.setLore(lore);
             arrowItem.setItemMeta(itemMeta);
 
@@ -80,7 +79,7 @@ public class ConfigUtils {
 
             Bukkit.addRecipe(recipe);
 
-            MissileObject obj = new MissileObject(arrowItem, range, magnitude, speed, cluster, nuclear);
+            MissileObject obj = new MissileObject(arrowItem, range, magnitude, speed, nuclear);
             obj.setGuiSlot(guiSlot);
             RowMissiles.missileList.put(obj, recipe);
         }
