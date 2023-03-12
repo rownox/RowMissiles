@@ -1,7 +1,6 @@
 package me.rownox.rowmissiles.objects;
 
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 
 public class OreObject {
 

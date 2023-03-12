@@ -30,6 +30,7 @@ public class ConfigUtils {
             int range = missilesConfig.getInt(key + ".range");
             int magnitude = missilesConfig.getInt(key + ".magnitude");
             int speed = missilesConfig.getInt(key + ".speed");
+            boolean cluster = missilesConfig.getBoolean(key + ".cluster");
             boolean nuclear = missilesConfig.getBoolean(key + ".nuclear");
             int guiSlot = missilesConfig.getInt(key + ".gui_slot");
 
@@ -79,7 +80,9 @@ public class ConfigUtils {
 
             Bukkit.addRecipe(recipe);
 
-            RowMissiles.missileList.put(new MissileObject(name, lore, arrowItem, arrowMaterial, range, magnitude, speed, nuclear, guiSlot), recipe);
+            MissileObject obj = new MissileObject(arrowItem, range, magnitude, speed, cluster, nuclear);
+            obj.setGuiSlot(guiSlot);
+            RowMissiles.missileList.put(obj, recipe);
         }
     }
 
@@ -89,14 +92,25 @@ public class ConfigUtils {
             Material blockFrom = Material.matchMaterial(oresConfig.getString(key + ".block_from"));
             String unrefinedName = oresConfig.getString(key + ".unrefined_name");
             Material unrefinedMat = Material.matchMaterial(oresConfig.getString(key + ".unrefined_mat"));
+            int refineDuration = oresConfig.getInt(key + ".refine_duration");
+            float experience = (float) oresConfig.getDouble(key + ".experience");
             String refinedName = oresConfig.getString(key + ".refined_name");
             Material refinedMat = Material.matchMaterial(oresConfig.getString(key + ".refined_mat"));
 
-            NamespacedKey namespacedKey = new NamespacedKey(RowMissiles.getInstance(), key);
-            RecipeChoice inputChoice = new RecipeChoice.MaterialChoice(unrefinedMat);
-            FurnaceRecipe recipe = new FurnaceRecipe(namespacedKey, new ItemStack(refinedMat), inputChoice, 0.7F, 20*100);
+            if (RowMissiles.customMiningEnabled) {
+                NamespacedKey namespacedKey = new NamespacedKey(RowMissiles.getInstance(), key);
+                RecipeChoice inputChoice = new RecipeChoice.MaterialChoice(unrefinedMat);
 
-            Bukkit.addRecipe(recipe);
+                ItemStack refined = new ItemStack(refinedMat);
+                ItemMeta itemMeta = refined.getItemMeta();
+                itemMeta.setDisplayName(refinedName);
+                refined.setItemMeta(itemMeta);
+
+                FurnaceRecipe recipe = new FurnaceRecipe(namespacedKey, new ItemStack(refined), inputChoice, experience, 20*refineDuration);
+
+                Bukkit.addRecipe(recipe);
+            }
+
             RowMissiles.ores.add(new OreObject(blockFrom, unrefinedName, unrefinedMat, refinedName, refinedMat));
         }
     }

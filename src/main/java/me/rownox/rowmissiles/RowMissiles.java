@@ -27,13 +27,14 @@ public final class RowMissiles extends JavaPlugin {
     private static YamlConfiguration missilesConfig;
     private static YamlConfiguration oresConfig;
     public static FileConfiguration config;
-
     public static RowMissiles plugin;
 
     public static HashMap<MissileObject, ShapedRecipe> missileList = new HashMap<>();
     public static WeakHashMap<UUID, PlayerValuesObject> playerValues = new WeakHashMap<>();
     public static List<OreObject> ores = new ArrayList<>();
+
     public static String prefix;
+    public static boolean customMiningEnabled;
 
     @Override
     public void onEnable() {
@@ -45,6 +46,7 @@ public final class RowMissiles extends JavaPlugin {
         loadDefaultConfig();
 
         prefix = config.getString("prefix");
+        customMiningEnabled = config.getBoolean("custom_mining");
 
         plugin.getCommand("missiles").setExecutor(new MissileCmd());
         getServer().getPluginManager().registerEvents(new ChatListener(), this);

@@ -25,22 +25,24 @@ public class BlockBreakListener implements Listener {
         Block b = e.getBlock();
         Material m = b.getType();
 
-        if (p.getGameMode() != GameMode.SURVIVAL) return;
-        for (OreObject ore : RowMissiles.ores) {
-            Bukkit.broadcastMessage(ore.getBlockFrom().toString());
-            Bukkit.broadcastMessage(m.toString());
-            if (ore.getBlockFrom().equals(m)) {
-                e.setCancelled(true);
-                b.setType(Material.AIR);
+        if (RowMissiles.customMiningEnabled) {
+            if (p.getGameMode() != GameMode.SURVIVAL) return;
+            for (OreObject ore : RowMissiles.ores) {
+                Bukkit.broadcastMessage(ore.getBlockFrom().toString());
+                Bukkit.broadcastMessage(m.toString());
+                if (ore.getBlockFrom().equals(m)) {
+                    e.setCancelled(true);
+                    b.setType(Material.AIR);
 
-                ItemStack unrefinedOre = new ItemStack(ore.getUnrefinedMat(), 1);
-                ItemMeta itemMeta = unrefinedOre.getItemMeta();
-                itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', ore.getUnrefinedName()));
-                itemMeta.addItemFlags(ItemFlag.values());
-                unrefinedOre.setItemMeta(itemMeta);
+                    ItemStack unrefinedOre = new ItemStack(ore.getUnrefinedMat());
+                    ItemMeta itemMeta = unrefinedOre.getItemMeta();
+                    itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', ore.getUnrefinedName()));
+                    itemMeta.addItemFlags(ItemFlag.values());
+                    unrefinedOre.setItemMeta(itemMeta);
 
-                p.getWorld().dropItemNaturally(b.getLocation(), unrefinedOre);
-                return;
+                    p.getWorld().dropItemNaturally(b.getLocation(), unrefinedOre);
+                    return;
+                }
             }
         }
     }

@@ -6,6 +6,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
@@ -20,19 +22,21 @@ public class MissileObject {
     private final int range;
     private final int magnitude;
     private final int speed;
+    private final boolean cluster;
     private final boolean nuclear;
-    private final int guiSlot;
+    private int guiSlot;
 
-    public MissileObject(String name, List<String> lore, ItemStack item, Material material, int range, int magnitude, int speed, boolean radioactive, int guiSlot) {
-        this.name = name;
-        this.lore = lore;
+    public MissileObject(ItemStack item, int range, int magnitude, int speed, boolean cluster, boolean nuclear) {
         this.item = item;
-        this.material = material;
+        this.lore = item.getItemMeta().getLore();
+        this.name = item.getItemMeta().getDisplayName();
+        this.material = item.getType();
         this.range = range;
         this.magnitude = magnitude;
         this.speed = speed;
-        this.nuclear = radioactive;
-        this.guiSlot = guiSlot;
+        this.cluster = cluster;
+        this.nuclear = nuclear;
+        this.guiSlot = 0;
     }
 
     public String getName() {
@@ -46,15 +50,17 @@ public class MissileObject {
     public int getRange() {
         return range;
     }
-    public int getRadius() {
+    public int getMagnitude() {
         return magnitude;
     }
     public int getSpeed() {
         return speed;
     }
+    public boolean isCluster() { return cluster; }
     public boolean isNuclear() {
         return nuclear;
     }
+    public void setGuiSlot(int num) { guiSlot = num;}
     public int getGuiSlot() { return guiSlot; }
 
     public void launch(Player p, @Nullable Location target, Block b) {
@@ -84,6 +90,7 @@ public class MissileObject {
     private void land(Player p, Location target) {
         int distance = getDistance(p.getLocation(), target);
         int time = distance / speed;
+        World world = p.getWorld();
 
         new BukkitRunnable() {
             public void run() {
@@ -92,11 +99,47 @@ public class MissileObject {
                             RowMissiles.prefix + "&b&lThe bomb has blown up at &c&l" + (int) target.getX() + "&b&l, &c&l" + (int) target.getY() + "&b&l, &c&l" + (int) target.getZ()));
                     op.playSound(op.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2, 1);
                 }
-                TNTPrimed bomb = (TNTPrimed) p.getWorld().spawn(target, TNTPrimed.class);
-                bomb.setFuseTicks(10);
-                bomb.setYield(magnitude);
+                if (isCluster()) {
+                    int x, y, z;
+                    for (int i = 0; i < 4; i++) {
+                        int randomAngle = (int) (Math.random() * Math.PI * 2);
+                        int randomRadius = (int) (Math.random() * magnitude);
+                        x = (int) (target.getX() + randomRadius * Math.cos(randomAngle));
+                        z = (int) (target.getZ() + randomRadius * Math.sin(randomAngle));
+                        y = target.getWorld().getHighestBlockYAt((int) x, (int) z);
+                        Location clusterLocation = new Location(world, x,y,z);
+                        explode(clusterLocation, world);
+                    }
+                }
+                if (isNuclear()) {
+                    new BukkitRunnable() {
+                        public void run() {
+
+                        }
+                    }.runTaskLater(RowMissiles.getInstance(), 20*60*5);
+                    new BukkitRunnable() {
+                        public void run() {
+                            if (isNuclear()) {
+                                for (Player op : Bukkit.getOnlinePlayers()) {
+                                    if (p.getLocation().distance(target) < magnitude) {
+                                        p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 2));
+                                    }
+                                }
+                            } else {
+                                cancel();
+                            }
+                        }
+                    }.runTaskTimer(RowMissiles.getInstance(), 20, 100);
+                }
+                explode(target, world);
             }
         }.runTaskLater(RowMissiles.getInstance(), 20L * (time + 5));
+    }
+
+    private void explode(Location target, World world) {
+        TNTPrimed bomb = (TNTPrimed) world.spawn(target, TNTPrimed.class);
+        bomb.setFuseTicks(10);
+        bomb.setYield(magnitude);
     }
 
     public int getDistance(Location loc1, Location loc2) {

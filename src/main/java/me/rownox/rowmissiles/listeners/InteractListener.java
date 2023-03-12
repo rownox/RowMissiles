@@ -28,8 +28,8 @@ public class InteractListener implements Listener {
         if (p.getGameMode() != GameMode.SURVIVAL) return;
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
-        for (MissileObject missile : RowMissiles.missileList.keySet()) {
-            if (missile.getItem().equals(item)) {
+        for (MissileObject MM : RowMissiles.missileList.keySet()) {
+            if (MM.getItem().equals(item)) {
                 Block b = e.getClickedBlock();
                 if (b == null) return;
 
@@ -46,7 +46,7 @@ public class InteractListener implements Listener {
 
                     Block blockUnder = b.getLocation().subtract(0, 1, 0).getBlock();
                     if (blockUnder.getType().equals(Material.LAVA_CAULDRON)) {
-                        missile.launch(p, pValues.getTargetLoc(), blockUnder);
+                        new MissileObject(MM.getItem(), MM.getRange(), MM.getMagnitude(), MM.getSpeed(), MM.isCluster(), MM.isNuclear()).launch(p, pValues.getTargetLoc(), blockUnder);
                     } else {
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&eFuel the launcher by placing a lava cauldron underneath the dispenser."));
                     }

@@ -7,7 +7,7 @@ missile1:
   range: 5000 # This is the distance you need to be within from the target to launch your missile.
   magnitude: 35 # This is the blast radius of the impact.
   speed: 50 # This is how fast in blocks per second the missile will travel.
-  cluster_bomb: false # The missile will spread out and hit multiple areas around the central location.
+  cluster: false # The missile will spread out and hit multiple areas around the central location.
   nuclear: false # Nuclear missiles leave behind lingering radiation damage.
   gui_slot: 10 # The slot in the missile gui that this missile will show up in.
   recipe_parts: # This is for the custom crafting recipe of the missile.
