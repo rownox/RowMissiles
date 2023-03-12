@@ -33,9 +33,7 @@ public class InteractListener implements Listener {
                 Block b = e.getClickedBlock();
                 if (b == null) return;
 
-                BlockData blockData = b.getBlockData();
-
-                if (blockData instanceof Directional directional) {
+                if (b.getBlockData() instanceof Directional directional) {
 
                     if (!b.getType().equals(Material.DISPENSER)) return;
                     e.setCancelled(true);

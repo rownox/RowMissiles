@@ -1,12 +1,22 @@
-# This is an example missile, all comments can be removed when creating a new one.
+
+# This is an example missile, all comments can be removed.
+
 missile1:
   name: "missile_name" # This will show up in guis and in the player inventory.
   material: "INSTANT_HEAL" # Here you can set what type of tipped arrow the missile is.
   range: 5000 # This is the distance you need to be within from the target to launch your missile.
-  radius: 35 # This is the blast radius of the impact.
+  magnitude: 35 # This is the blast radius of the impact.
   speed: 50 # This is how fast in blocks per second the missile will travel.
-  nuclear: true # Nuclear missiles leave behind lingering radiation damage.
+  cluster_bomb: false # The missile will spread out and hit multiple areas around the central location.
+  nuclear: false # Nuclear missiles leave behind lingering radiation damage.
   gui_slot: 10 # The slot in the missile gui that this missile will show up in.
-  recipe: "STONE, DIRT, STONE, DIRT, STONE, DIRT, STONE, DIRT, STONE"
-  recipe_shape: "ABC DEF GHI"
-  recipe_count: "64, 1, 64, 1, 32, 1, 64, 64, 64"
+  recipe_parts: # This is for the custom crafting recipe of the missile.
+  # Format: "character, material, amount"
+  # If you use a custom ore, make sure to name the material here the refined name of the custom ore.
+    - "A, &aUranium, 1"
+    - "B, minecraft:iron_ingot, 1"
+    - "H, minecraft:nether_star, 1"
+    - "Z, minecraft:obsidian, 1"
+  # Make sure all 9 slots are filled, and separate using '|' (make a slot blank by using a space).
+  # Example: "AAA|B B|CCC"
+  recipe_shape: " A |BHB|Z Z"

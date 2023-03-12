@@ -18,18 +18,18 @@ public class MissileObject {
     private final ItemStack item;
     private final Material material;
     private final int range;
-    private final int radius;
+    private final int magnitude;
     private final int speed;
     private final boolean nuclear;
     private final int guiSlot;
 
-    public MissileObject(String name, List<String> lore, ItemStack item, Material material, int range, int radius, int speed, boolean radioactive, int guiSlot) {
+    public MissileObject(String name, List<String> lore, ItemStack item, Material material, int range, int magnitude, int speed, boolean radioactive, int guiSlot) {
         this.name = name;
         this.lore = lore;
         this.item = item;
         this.material = material;
         this.range = range;
-        this.radius = radius;
+        this.magnitude = magnitude;
         this.speed = speed;
         this.nuclear = radioactive;
         this.guiSlot = guiSlot;
@@ -47,7 +47,7 @@ public class MissileObject {
         return range;
     }
     public int getRadius() {
-        return radius;
+        return magnitude;
     }
     public int getSpeed() {
         return speed;
@@ -94,7 +94,7 @@ public class MissileObject {
                 }
                 TNTPrimed bomb = (TNTPrimed) p.getWorld().spawn(target, TNTPrimed.class);
                 bomb.setFuseTicks(10);
-                bomb.setYield(radius);
+                bomb.setYield(magnitude);
             }
         }.runTaskLater(RowMissiles.getInstance(), 20L * (time + 5));
     }

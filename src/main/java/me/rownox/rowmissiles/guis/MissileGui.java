@@ -18,7 +18,7 @@ import static org.bukkit.Bukkit.getServer;
 
 public class MissileGui implements Listener {
 
-    Inventory gui;
+    private static Inventory gui;
 
     public MissileGui(Player p) {
         int rows = RowMissiles.config.getInt("gui_rows");

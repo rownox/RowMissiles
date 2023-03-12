@@ -27,7 +27,7 @@ public class ChatListener implements Listener {
                     String[] parts = message.split(" ");
                     double x, z;
 
-                    if (e.getMessage().equalsIgnoreCase("cancel")) {
+                    if (message.equalsIgnoreCase("cancel")) {
                         pValues.setSettingLocation(false);
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&aLaunch successfully aborted."));
                         p.playSound(p.getLocation(), Sound.ITEM_BOTTLE_FILL_DRAGONBREATH, 1, 1);
@@ -44,6 +44,7 @@ public class ChatListener implements Listener {
                         x = Double.parseDouble(parts[0]);
                         z = Double.parseDouble(parts[1]);
                     } catch (NumberFormatException ex) {
+                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&cYou didn't enter valid coordinates. Please try again."));
                         return;
                     }
 

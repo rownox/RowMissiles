@@ -1,0 +1,9 @@
+
+# This is an example ore, all comments can be removed.
+
+ore1:
+  block_from: "minecraft:reinforced_deepslate" # The block that the ore is mined from.
+  unrefined_name: "&3Unrefined Uranium" # The name of the initial ore from the block.
+  unrefined_mat: "minecraft:disc_fragment_5" # The material of the initial ore from the block.
+  refined_name: "&aUranium" # The name of the ore after refining it in a furnace.
+  refined_mat: "minecraft:echo_shard" # The material of the ore after refining it in a furnace.
