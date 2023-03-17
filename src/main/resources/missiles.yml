@@ -2,8 +2,8 @@
 # This is an example missile, all comments can be removed.
 
 missile1:
-  name: "missile_name" # This will show up in guis and in the player inventory.
-  material: "INSTANT_HEAL" # Here you can set what type of tipped arrow the missile is.
+  name: "&9&lNebula Dominator" # This will show up in guis and in the player inventory.
+  material: "SLOW_FALLING" # Here you can set what type of tipped arrow the missile is.
   range: 5000 # This is the distance you need to be within from the target to launch your missile.
   magnitude: 35 # This is the blast radius of the impact.
   speed: 50 # This is how fast in blocks per second the missile will travel.
@@ -12,10 +12,52 @@ missile1:
   recipe_parts: # This is for the custom crafting recipe of the missile.
   # Format: "character, material, amount"
   # If you use a custom ore, make sure to name the material here the refined name of the custom ore.
+    - "A, &aUranium, 2"
+    - "B, minecraft:iron_ingot, 64"
+    - "H, minecraft:nether_star, 1"
+    - "Z, minecraft:obsidian, 32"
+  # Make sure all 9 slots are filled, and separate using '|' (make a slot blank by using a space).
+  # Example: "AAA|B B|CCC"
+  recipe_shape: " A |BHB|Z Z"
+missile2:
+  name: "&e&lGamma Ray"
+  material: "LUCK"
+  range: 1000
+  magnitude: 20
+  speed: 100
+  nuclear: true
+  gui_slot: 12
+  recipe_parts:
     - "A, &aUranium, 1"
     - "B, minecraft:iron_ingot, 1"
     - "H, minecraft:nether_star, 1"
     - "Z, minecraft:obsidian, 1"
-  # Make sure all 9 slots are filled, and separate using '|' (make a slot blank by using a space).
-  # Example: "AAA|B B|CCC"
+  recipe_shape: " A |BHB|Z Z"
+missile3:
+  name: "&6&lSolar Flare"
+  material: "FIRE_RESISTANCE"
+  range: 2000
+  magnitude: 30
+  speed: 150
+  nuclear: false
+  gui_slot: 14
+  recipe_parts:
+    - "A, &aUranium, 1"
+    - "B, minecraft:iron_ingot, 1"
+    - "H, minecraft:nether_star, 1"
+    - "Z, minecraft:obsidian, 1"
+  recipe_shape: " A |BHB|Z Z"
+missile4:
+  name: "&f&lBlack Hole"
+  material: "INVISIBILITY"
+  range: 100000
+  magnitude: 500
+  speed: 1000
+  nuclear: true
+  gui_slot: 16
+  recipe_parts:
+    - "A, &aUranium, 1"
+    - "B, minecraft:iron_ingot, 1"
+    - "H, minecraft:nether_star, 1"
+    - "Z, minecraft:obsidian, 1"
   recipe_shape: " A |BHB|Z Z"

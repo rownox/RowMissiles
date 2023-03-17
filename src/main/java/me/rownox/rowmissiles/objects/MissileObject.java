@@ -2,6 +2,7 @@ package me.rownox.rowmissiles.objects;
 
 import me.rownox.rowmissiles.RowMissiles;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
@@ -67,10 +69,14 @@ public class MissileObject {
         PlayerValuesObject pValues = RowMissiles.playerValues.get(p.getUniqueId());
 
         if (pValues.isReadyToLaunch()) {
-            for (Player op : Bukkit.getOnlinePlayers()) {
-                op.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&b&lAn intercontinental ballistic missile was launched."));
-                op.playSound(op.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_3, 2, 1);
+            if (RowMissiles.broadcastEnabled) {
+                for (Player op : Bukkit.getOnlinePlayers()) {
+                    broadcastLaunch(op);
+                }
+            } else {
+                broadcastLaunch(p);
             }
+
             b.setType(Material.CAULDRON);
             pValues.setReadyToLaunch(false);
 
@@ -118,10 +124,12 @@ public class MissileObject {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (Player op : Bukkit.getOnlinePlayers()) {
-                    op.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                            RowMissiles.prefix + "&b&lThe bomb has blown up at &c&l" + (int) target.getX() + "&b&l, &c&l" + (int) target.getY() + "&b&l, &c&l" + (int) target.getZ()));
-                    op.playSound(op.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2, 1);
+                if (RowMissiles.broadcastEnabled) {
+                    for (Player op : Bukkit.getOnlinePlayers()) {
+                        broadcastLand(op, target);
+                    }
+                } else {
+                    broadcastLand(p, target);
                 }
 
                 int x, y, z;
@@ -144,10 +152,9 @@ public class MissileObject {
                     public void run() {
                         if (duration > 0) {
                             for (Player op : Bukkit.getOnlinePlayers()) {
-                                if (p.getLocation().distance(target) < magnitude) {
-                                    p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 200, 2));
-                                    duration--;
-                                }
+                                if (!radiusCheck(op, target)) continue;
+                                op.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 200, 2));
+                                duration--;
                             }
                         } else {
                             cancel();
@@ -159,9 +166,16 @@ public class MissileObject {
     }
 
     private void explode(Location target, World world) {
-        TNTPrimed bomb = (TNTPrimed) world.spawn(target, TNTPrimed.class);
+        TNTPrimed bomb = world.spawn(target, TNTPrimed.class);
         bomb.setFuseTicks(0);
         bomb.setYield((float) (magnitude * 0.5));
+        bomb.setIsIncendiary(true);
+        for (Player op : Bukkit.getOnlinePlayers()) {
+            if (!radiusCheck(op, target)) continue;
+            op.damage(op.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() + 20);
+            op.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20*60, 1));
+            op.setFireTicks(20*20);
+        }
     }
 
     public int getDistance(Location loc1, Location loc2) {
@@ -172,5 +186,21 @@ public class MissileObject {
         int dx = Math.abs(x1 - x2);
         int dz = Math.abs(z1 - z2);
         return dx + dz;
+    }
+
+    private boolean radiusCheck(Player p, Location loc) {
+        if (p.getLocation().distance(loc) > magnitude) return false;
+        return p.getGameMode() != GameMode.CREATIVE;
+    }
+
+    private void broadcastLand(Player p, Location target) {
+        p.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                RowMissiles.prefix + "&b&lThe bomb has blown up at &c&l" + (int) target.getX() + "&b&l, &c&l" + (int) target.getY() + "&b&l, &c&l" + (int) target.getZ()));
+        p.playSound(p.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2, 1);
+    }
+
+    private void broadcastLaunch(Player p) {
+        p.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&b&lThe " + name + " &b&lmissile was launched."));
+        p.playSound(p.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_3, 2, 1);
     }
 }

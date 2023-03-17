@@ -30,23 +30,23 @@ public final class RowMissiles extends JavaPlugin {
     public static RowMissiles plugin;
 
     public static HashMap<MissileObject, ShapedRecipe> missileList = new HashMap<>();
+    public static List<OreObject> oreList = new ArrayList<>();
     public static WeakHashMap<UUID, PlayerValuesObject> playerValues = new WeakHashMap<>();
-    public static List<OreObject> ores = new ArrayList<>();
 
     public static String prefix;
     public static boolean customMiningEnabled;
+    public static boolean broadcastEnabled;
 
     @Override
     public void onEnable() {
 
         plugin = this;
 
-        loadOreConfig();
-        loadMissileConfig();
-        loadDefaultConfig();
+        loadConfigs();
 
         prefix = config.getString("prefix");
         customMiningEnabled = config.getBoolean("custom_mining");
+        broadcastEnabled = config.getBoolean("message_broadcast");
 
         plugin.getCommand("missiles").setExecutor(new MissileCmd());
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
@@ -58,40 +58,46 @@ public final class RowMissiles extends JavaPlugin {
         ConfigUtils.initMissiles();
     }
 
-    public void loadMissileConfig() {
+    public static void reloadConfigs() {
+        try {
+            missilesConfig.load(missilesFile);
+            oresConfig.load(oresFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        missileList.clear();
+        oreList.clear();
+
+        ConfigUtils.initOres();
+        ConfigUtils.initMissiles();
+    }
+
+    public void loadConfigs() {
+        config = getConfig();
+        config.options().copyDefaults(true);
+        saveDefaultConfig();
+
+        oresFile = new File(getDataFolder(), "ores.yml");
         missilesFile = new File(getDataFolder(), "missiles.yml");
+
+        if (!oresFile.exists()) {
+            oresFile.getParentFile().mkdirs();
+            saveResource("ores.yml", false);
+        }
         if (!missilesFile.exists()) {
             missilesFile.getParentFile().mkdirs();
             saveResource("missiles.yml", false);
         }
 
+        oresConfig = new YamlConfiguration();
         missilesConfig = new YamlConfiguration();
         try {
+            oresConfig.load(oresFile);
             missilesConfig.load(missilesFile);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-    }
-
-    public void loadOreConfig() {
-       oresFile = new File(getDataFolder(), "ores.yml");
-        if (!oresFile.exists()) {
-            oresFile.getParentFile().mkdirs();
-            saveResource("ores.yml", false);
-        }
-
-        oresConfig = new YamlConfiguration();
-        try {
-            oresConfig.load(oresFile);
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void loadDefaultConfig() {
-        config = getConfig();
-        config.options().copyDefaults(true);
-        saveDefaultConfig();
     }
 
     public static RowMissiles getInstance() {

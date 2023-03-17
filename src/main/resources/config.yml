@@ -7,3 +7,5 @@ gui_rows: 3
 prefix: "&7[&3&lRowMissiles&7] "
 
 custom_mining: true
+
+message_broadcast: true

@@ -25,7 +25,6 @@ public class InteractListener implements Listener {
         ItemStack item = p.getInventory().getItemInMainHand();
         PlayerValuesObject pValues = RowMissiles.playerValues.get(p.getUniqueId());
 
-        if (p.getGameMode() != GameMode.SURVIVAL) return;
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
         for (MissileObject MM : RowMissiles.missileList.keySet()) {

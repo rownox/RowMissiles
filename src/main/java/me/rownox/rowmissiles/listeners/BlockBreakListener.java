@@ -27,9 +27,7 @@ public class BlockBreakListener implements Listener {
 
         if (RowMissiles.customMiningEnabled) {
             if (p.getGameMode() != GameMode.SURVIVAL) return;
-            for (OreObject ore : RowMissiles.ores) {
-                Bukkit.broadcastMessage(ore.getBlockFrom().toString());
-                Bukkit.broadcastMessage(m.toString());
+            for (OreObject ore : RowMissiles.oreList) {
                 if (ore.getBlockFrom().equals(m)) {
                     e.setCancelled(true);
                     b.setType(Material.AIR);

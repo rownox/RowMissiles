@@ -55,8 +55,6 @@ public class ConfigUtils {
             itemMeta.setLore(lore);
             arrowItem.setItemMeta(itemMeta);
 
-            Material arrowMaterial = arrowItem.getType();
-
             List<String> recipeParts = missilesConfig.getStringList(key + ".recipe_parts");
             String recipeShapeString = missilesConfig.getString(key + ".recipe_shape");
 
@@ -75,6 +73,10 @@ public class ConfigUtils {
                 RecipeChoice inputChoice = new RecipeChoice.ExactChoice(item);
 
                 recipe.setIngredient(partName, inputChoice);
+            }
+
+            if (Bukkit.getRecipe(namespacedKey) != null) {
+                Bukkit.removeRecipe(namespacedKey);
             }
 
             Bukkit.addRecipe(recipe);
@@ -102,20 +104,24 @@ public class ConfigUtils {
 
                 ItemStack refined = new ItemStack(refinedMat);
                 ItemMeta itemMeta = refined.getItemMeta();
-                itemMeta.setDisplayName(refinedName);
+                itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', refinedName));
                 refined.setItemMeta(itemMeta);
 
                 FurnaceRecipe recipe = new FurnaceRecipe(namespacedKey, new ItemStack(refined), inputChoice, experience, 20*refineDuration);
 
+                if (Bukkit.getRecipe(namespacedKey) != null) {
+                    Bukkit.removeRecipe(namespacedKey);
+                }
+
                 Bukkit.addRecipe(recipe);
             }
 
-            RowMissiles.ores.add(new OreObject(blockFrom, unrefinedName, unrefinedMat, refinedName, refinedMat));
+            RowMissiles.oreList.add(new OreObject(blockFrom, unrefinedName, unrefinedMat, refinedName, refinedMat));
         }
     }
 
     private static Material customOreMatch(String matString) {
-        for (OreObject ore : RowMissiles.ores) {
+        for (OreObject ore : RowMissiles.oreList) {
             if (ore.getRefinedName().equalsIgnoreCase(matString)) return ore.getRefinedMat();
         }
         return Material.matchMaterial(matString);
