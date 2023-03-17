@@ -23,10 +23,10 @@ public class MissileCmd implements CommandExecutor {
                 if (p.hasPermission("rowmissiles.give")) {
                     for (MissileObject missile : RowMissiles.missileList.keySet()) {
                         p.getInventory().addItem(missile.getItem());
-                        p.getInventory().addItem(new ItemStack(Material.DISPENSER));
-                        p.getInventory().addItem(new ItemStack(Material.CAULDRON));
-                        p.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
                     }
+                    p.getInventory().addItem(new ItemStack(Material.DISPENSER));
+                    p.getInventory().addItem(new ItemStack(Material.CAULDRON));
+                    p.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
                     return true;
                 }
             } else if (args[0].equalsIgnoreCase("reload")) {

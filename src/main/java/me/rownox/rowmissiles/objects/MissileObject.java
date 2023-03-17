@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 public class MissileObject {
 
@@ -133,15 +134,16 @@ public class MissileObject {
                 }
 
                 int x, y, z;
-                for (int i = 0; i < 10; i++) {
-                    int randomAngle = (int) (Math.random() * Math.PI * 2);
-                    int randomRadius = (int) (Math.random() * (magnitude*1.3));
-                    x = (int) (target.getX() + randomRadius * Math.cos(randomAngle));
-                    z = (int) (target.getZ() + randomRadius * Math.sin(randomAngle));
-                    y = target.getWorld().getHighestBlockYAt((int) x, (int) z);
+                for (int i = 0; i < magnitude; i++) {
+                    Random random = new Random();
+                    x = (int) (target.getX() + random.nextInt(-magnitude/4, magnitude/4));
+                    z = (int) (target.getZ() + random.nextInt(-magnitude/4, magnitude/4));
+                    y = target.getWorld().getHighestBlockYAt((int) x, z);
                     Location clusterLocation = new Location(world, x,y,z);
-                    explode(clusterLocation, world);
+                    clusterBomb(clusterLocation, world);
                 }
+
+                centerBomb(target, world);
 
                 if (isNuclear()) {
                     duration = 150;
@@ -165,14 +167,20 @@ public class MissileObject {
         }.runTaskLater(RowMissiles.getInstance(), 20L * (time + 5));
     }
 
-    private void explode(Location target, World world) {
+    private void clusterBomb(Location target, World world) {
         TNTPrimed bomb = world.spawn(target, TNTPrimed.class);
         bomb.setFuseTicks(0);
-        bomb.setYield((float) (magnitude * 0.5));
+        bomb.setYield((float) (10));
         bomb.setIsIncendiary(true);
+    }
+
+    private void centerBomb(Location target, World world) {
+        TNTPrimed bomb = world.spawn(target, TNTPrimed.class);
+        bomb.setFuseTicks(0);
+        bomb.setYield((float) (magnitude));
         for (Player op : Bukkit.getOnlinePlayers()) {
             if (!radiusCheck(op, target)) continue;
-            op.damage(op.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() + 20);
+            op.damage(20);
             op.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20*60, 1));
             op.setFireTicks(20*20);
         }
