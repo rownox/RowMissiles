@@ -1,5 +1,6 @@
 package me.rownox.rowmissiles.guis;
 
+import me.rownox.rowmissiles.ConfigUtils;
 import me.rownox.rowmissiles.RowMissiles;
 import me.rownox.rowmissiles.objects.MissileObject;
 import org.bukkit.Bukkit;
@@ -13,6 +14,9 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionType;
+
+import java.util.List;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -34,7 +38,21 @@ public class MissileGui implements Listener {
 
     private void addItems() {
         for (MissileObject missile : RowMissiles.missileList.keySet()) {
-            gui.setItem(missile.getGuiSlot(), missile.getItem());
+
+            ItemStack shopItem = ConfigUtils.missileItem(missile.getName(), missile.getColor());
+
+            List<String> lore = List.of(
+                    ChatColor.GRAY + "Range: " + missile.getRange(),
+                    ChatColor.GRAY + "Radius: " + missile.getMagnitude(),
+                    ChatColor.GRAY + "Speed: " + missile.getSpeed(),
+                    ChatColor.GRAY + "Nuclear: " + missile.isNuclear()
+            );
+
+            ItemMeta meta = shopItem.getItemMeta();
+            meta.setLore(lore);
+            shopItem.setItemMeta(meta);
+
+            gui.setItem(missile.getGuiSlot(), shopItem);
         }
     }
 
@@ -53,11 +71,11 @@ public class MissileGui implements Listener {
     private void onInventoryClick(InventoryClickEvent e) {
         if (e.getInventory() == gui) {
             e.setCancelled(true);
-            for (MissileObject missile : RowMissiles.missileList.keySet()) {
-                if (e.getCurrentItem() == missile.getItem()) {
-                    new RecipeGui(RowMissiles.missileList.get(missile));
-                }
-            }
+//            for (MissileObject missile : RowMissiles.missileList.keySet()) {
+//                if (e.getCurrentItem() == missile.getItem()) {
+//                    new RecipeGui(RowMissiles.missileList.get(missile));
+//                }
+//            }
         }
     }
     @EventHandler

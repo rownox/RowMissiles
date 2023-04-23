@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -14,7 +13,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
-import javax.naming.Name;
 import java.util.List;
 
 public class ConfigUtils {
@@ -35,25 +33,7 @@ public class ConfigUtils {
 
             PotionType potionType = PotionType.valueOf(potionTypeString.toUpperCase());
 
-            List<String> lore = List.of(
-                    ChatColor.GRAY + "Range: " + range,
-                    ChatColor.GRAY + "Radius: " + magnitude,
-                    ChatColor.GRAY + "Speed: " + speed,
-                    ChatColor.GRAY + "Nuclear: " + nuclear
-            );
-
-            ItemStack arrowItem = new ItemStack(Material.TIPPED_ARROW);
-
-            PotionMeta potionMeta = (PotionMeta) arrowItem.getItemMeta();
-            PotionData potionData = new PotionData(potionType);
-            potionMeta.setBasePotionData(potionData);
-            arrowItem.setItemMeta(potionMeta);
-
-            ItemMeta itemMeta = arrowItem.getItemMeta();
-            itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-            itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-            itemMeta.setLore(lore);
-            arrowItem.setItemMeta(itemMeta);
+            ItemStack arrowItem = missileItem(name, potionType);
 
             List<String> recipeParts = missilesConfig.getStringList(key + ".recipe_parts");
             String recipeShapeString = missilesConfig.getString(key + ".recipe_shape");
@@ -81,7 +61,7 @@ public class ConfigUtils {
 
             Bukkit.addRecipe(recipe);
 
-            MissileObject obj = new MissileObject(arrowItem, range, magnitude, speed, nuclear);
+            MissileObject obj = new MissileObject(arrowItem, potionType, range, magnitude, speed, nuclear);
             obj.setGuiSlot(guiSlot);
             RowMissiles.missileList.put(obj, recipe);
         }
@@ -125,5 +105,21 @@ public class ConfigUtils {
             if (ore.getRefinedName().equalsIgnoreCase(matString)) return ore.getRefinedMat();
         }
         return Material.matchMaterial(matString);
+    }
+
+    public static ItemStack missileItem(String name, PotionType type) {
+        ItemStack arrowItem = new ItemStack(Material.TIPPED_ARROW);
+
+        PotionMeta potionMeta = (PotionMeta) arrowItem.getItemMeta();
+        PotionData potionData = new PotionData(type);
+        potionMeta.setBasePotionData(potionData);
+        arrowItem.setItemMeta(potionMeta);
+
+        ItemMeta itemMeta = arrowItem.getItemMeta();
+        itemMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+        itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        arrowItem.setItemMeta(itemMeta);
+
+        return arrowItem;
     }
 }

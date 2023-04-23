@@ -2,7 +2,6 @@ package me.rownox.rowmissiles.objects;
 
 import me.rownox.rowmissiles.RowMissiles;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
@@ -23,6 +22,7 @@ public class MissileObject {
     private final String name;
     private final List<String> lore;
     private final ItemStack item;
+    private final PotionType color;
     private final Material material;
     private final int range;
     private final int magnitude;
@@ -31,11 +31,12 @@ public class MissileObject {
     private int duration;
     private int guiSlot;
 
-    public MissileObject(ItemStack item, int range, int magnitude, int speed, boolean nuclear) {
+    public MissileObject(ItemStack item, PotionType color, int range, int magnitude, int speed, boolean nuclear) {
         this.item = item;
         this.lore = item.getItemMeta().getLore();
         this.name = item.getItemMeta().getDisplayName();
         this.material = item.getType();
+        this.color = color;
         this.range = range;
         this.magnitude = magnitude;
         this.speed = speed;
@@ -51,6 +52,7 @@ public class MissileObject {
     }
     public ItemStack getItem() { return item; }
     public Material getMaterial() { return material; }
+    public PotionType getColor() { return color; }
     public int getRange() {
         return range;
     }
