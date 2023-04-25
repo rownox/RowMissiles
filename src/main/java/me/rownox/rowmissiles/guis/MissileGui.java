@@ -11,6 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -78,8 +80,16 @@ public class MissileGui implements Listener {
 //            }
         }
     }
+
     @EventHandler
     private void onInventoryDrag(InventoryDragEvent e) {
+        if (e.getInventory() == gui) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    private void onInventoryMove(InventoryInteractEvent e){
         if (e.getInventory() == gui) {
             e.setCancelled(true);
         }
