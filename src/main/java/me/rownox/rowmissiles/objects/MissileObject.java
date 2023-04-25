@@ -210,7 +210,7 @@ public class MissileObject {
     }
 
     private void broadcastLaunch(Player p) {
-        p.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&b&lThe " + name + " &b&lmissile was launched."));
+        p.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&b&lA " + name + " &b&lmissile was launched."));
         p.playSound(p.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_3, 2, 1);
     }
 }
