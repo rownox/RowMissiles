@@ -17,8 +17,11 @@ public class MissileCmd implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player p) {
             if (args.length < 1) {
+                if (!RowMissiles.config.getBoolean("gui_enabled")) {
+                    p.sendMessage(ChatColor.RED + "The missile gui is disabled on this server.");
+                    return true;
+                }
                 new MissileGui(p);
-                return true;
             } else if (args[0].equalsIgnoreCase("give")) {
                 if (p.hasPermission("rowmissiles.give")) {
                     for (MissileObject missile : RowMissiles.missileList.keySet()) {
@@ -33,6 +36,7 @@ public class MissileCmd implements CommandExecutor {
                 if (p.hasPermission("rowmissiles.reload")) {
                     RowMissiles.reloadConfigs();
                     p.sendMessage(ChatColor.GREEN + "RowMissiles configs successfully reloaded.");
+                    return true;
                 }
             } else {
                 p.sendMessage("Commands: ", "/missiles", "/missiles give", "/missiles reload");

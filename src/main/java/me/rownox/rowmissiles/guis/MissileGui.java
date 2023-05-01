@@ -78,6 +78,7 @@ public class MissileGui implements Listener {
 //                    new RecipeGui(RowMissiles.missileList.get(missile));
 //                }
 //            }
+            return;
         }
     }
 
