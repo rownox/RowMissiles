@@ -73,12 +73,6 @@ public class MissileGui implements Listener {
     private void onInventoryClick(InventoryClickEvent e) {
         if (e.getInventory() == gui) {
             e.setCancelled(true);
-//            for (MissileObject missile : RowMissiles.missileList.keySet()) {
-//                if (e.getCurrentItem() == missile.getItem()) {
-//                    new RecipeGui(RowMissiles.missileList.get(missile));
-//                }
-//            }
-            return;
         }
     }
 
