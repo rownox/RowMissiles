@@ -3,15 +3,14 @@ package me.rownox.rowmissiles.objects;
 import me.rownox.rowmissiles.RowMissiles;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -85,28 +84,36 @@ public class MissileObject {
 
             p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
 
-            Firework firework = p.getWorld().spawn(b.getLocation().add(0, 2, 0), Firework.class);
+            ArmorStand missileEntity;
+            missileEntity = (ArmorStand) b.getLocation().getWorld().spawnEntity(b.getLocation().add(0, 2, 0), EntityType.ARMOR_STAND);
 
-            FireworkMeta meta = firework.getFireworkMeta();
-            FireworkEffect effect = FireworkEffect.builder()
-                    .withColor(Color.WHITE)
-                    .withFade(Color.RED)
-                    .with(FireworkEffect.Type.BURST)
-                    .flicker(true)
-                    .trail(true)
-                    .build();
-            meta.addEffect(effect);
-            meta.setPower(10);
-            firework.setFireworkMeta(meta);
+            missileEntity.setInvulnerable(true);
+
+            missileEntity.setHelmet(new ItemStack(Material.TNT));
+            missileEntity.setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE));
+            missileEntity.setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS));
+            missileEntity.setBoots(new ItemStack(Material.DIAMOND_BOOTS));
+
+            missileEntity.setBasePlate(false);
 
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    firework.detonate();
-                }
-            }.runTaskLater(RowMissiles.getInstance(), 40);
+                    missileEntity.setVelocity(new Vector(0, 1, 0).multiply(1));
 
-            p.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, b.getLocation().add(0.5, 0.5, 0.5), 3);
+                    Location bottomLocation = missileEntity.getLocation().subtract(0, 1, 0);
+                    missileEntity.getWorld().spawnParticle(Particle.FLAME, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
+                    missileEntity.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
+                    missileEntity.getWorld().spawnParticle(Particle.SMOKE_LARGE, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
+                }
+            }.runTaskTimer(RowMissiles.getInstance(), 0, 2);
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    missileEntity.remove();
+                }
+            }.runTaskLater(RowMissiles.getInstance(), 20*5);
 
             land(p, target);
         } else {

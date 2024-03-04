@@ -6,7 +6,7 @@ gui_enabled: true
 
 gui_rows: 3
 
-prefix: "&7[&3&lRowMissiles&7] "
+prefix: "&3&lRowMissiles | "
 
 custom_mining: true
 
