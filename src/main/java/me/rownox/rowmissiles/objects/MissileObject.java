@@ -84,37 +84,7 @@ public class MissileObject {
 
             p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
 
-            ArmorStand missileEntity;
-            missileEntity = (ArmorStand) b.getLocation().getWorld().spawnEntity(b.getLocation().add(0, 2, 0), EntityType.ARMOR_STAND);
-
-            missileEntity.setInvulnerable(true);
-
-            missileEntity.setHelmet(new ItemStack(Material.TNT));
-            missileEntity.setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE));
-            missileEntity.setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS));
-            missileEntity.setBoots(new ItemStack(Material.DIAMOND_BOOTS));
-
-            missileEntity.setBasePlate(false);
-
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    missileEntity.setVelocity(new Vector(0, 1, 0).multiply(1));
-
-                    Location bottomLocation = missileEntity.getLocation().subtract(0, 1, 0);
-                    missileEntity.getWorld().spawnParticle(Particle.FLAME, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
-                    missileEntity.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
-                    missileEntity.getWorld().spawnParticle(Particle.SMOKE_LARGE, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
-                }
-            }.runTaskTimer(RowMissiles.getInstance(), 0, 2);
-
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    missileEntity.remove();
-                }
-            }.runTaskLater(RowMissiles.getInstance(), 20*5);
-
+            shootMissile(b.getLocation());
             land(p, target);
         } else {
             p.sendMessage(
@@ -218,6 +188,60 @@ public class MissileObject {
 
     private void broadcastLaunch(Player p) {
         p.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&b&lA " + name + " &b&lmissile was launched."));
-        p.playSound(p.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_3, 2, 1);
+        p.playSound(p.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 2, 1);
+    }
+
+    private void shootMissile(Location loc) {
+        ArmorStand missileEntity = spawnMissile(loc);
+        if (missileEntity == null) return;
+        Location bottomLocation = missileEntity.getLocation().subtract(0, 1, 0);
+        Vector vector = new Vector(0, 1, 0).multiply(1);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                missileEntity.setVelocity(vector);
+                missileEntity.getWorld().spawnParticle(Particle.FLAME, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
+                missileEntity.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
+                missileEntity.getWorld().spawnParticle(Particle.SMOKE_LARGE, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
+            }
+        }.runTaskTimer(RowMissiles.getInstance(), 0, 2);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                missileEntity.remove();
+            }
+        }.runTaskLater(RowMissiles.getInstance(), 20*5);
+    }
+
+    public static ArmorStand spawnMissile(Location loc) {
+        if (loc.getWorld() == null) return null;
+
+        for (Entity entity : loc.getWorld().getNearbyEntities(loc, 1, 1, 1)) {
+            if (entity instanceof LivingEntity) {
+                return null;
+            }
+        }
+
+        if (!loc.getBlock().isEmpty()) {
+            return null;
+        }
+
+        ArmorStand missileEntity = (ArmorStand) loc.getWorld().spawnEntity(loc.add(0.5, 1, 0.5), EntityType.ARMOR_STAND);
+
+        missileEntity.setHelmet(new ItemStack(Material.TNT));
+        missileEntity.setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE));
+        missileEntity.setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS));
+        missileEntity.setBoots(new ItemStack(Material.NETHERITE_BOOTS));
+
+        missileEntity.setCollidable(false);
+
+        missileEntity.setBasePlate(false);
+
+        missileEntity.setCanPickupItems(false);
+        missileEntity.setRemoveWhenFarAway(false);
+
+        return missileEntity;
     }
 }

@@ -49,29 +49,12 @@ public class InteractListener implements Listener {
                     }
                     return;
                 }
-                spawnMissile(p, b.getLocation());
+                MissileObject.spawnMissile(b.getLocation());
                 if (p.getGameMode() == GameMode.SURVIVAL)
                     p.getInventory().getItemInMainHand().setAmount(item.getAmount() - 1);
             }
         }
 
-    }
-
-    public void spawnMissile(Player player, Location location) {
-        ArmorStand missileEntity;
-        missileEntity = (ArmorStand) location.getWorld().spawnEntity(location.add(0.5, 2, 0.5), EntityType.ARMOR_STAND);
-
-        missileEntity.setGravity(false);
-
-        missileEntity.setHelmet(new ItemStack(Material.TNT));
-        missileEntity.setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE));
-        missileEntity.setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS));
-        missileEntity.setBoots(new ItemStack(Material.NETHERITE_BOOTS));
-
-        missileEntity.setInvulnerable(true);
-        missileEntity.setCollidable(false);
-
-        missileEntity.setBasePlate(false);
     }
 
     private boolean isMissileArmorStand(ArmorStand armorStand) {
