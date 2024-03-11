@@ -4,8 +4,11 @@ import me.rownox.rowmissiles.RowMissiles;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -15,6 +18,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class MissileObject {
 
@@ -26,11 +30,10 @@ public class MissileObject {
     private final int range;
     private final int magnitude;
     private final int speed;
-    private final boolean nuclear;
-    private int duration;
-    private int guiSlot;
+    private final String id;
 
-    public MissileObject(ItemStack item, PotionType color, int range, int magnitude, int speed, boolean nuclear) {
+
+    public MissileObject(ItemStack item, PotionType color, int range, int magnitude, int speed) {
         this.item = item;
         this.lore = item.getItemMeta().getLore();
         this.name = item.getItemMeta().getDisplayName();
@@ -39,8 +42,7 @@ public class MissileObject {
         this.range = range;
         this.magnitude = magnitude;
         this.speed = speed;
-        this.nuclear = nuclear;
-        this.guiSlot = 0;
+        this.id = UUID.randomUUID().toString();
     }
 
     public String getName() {
@@ -49,9 +51,15 @@ public class MissileObject {
     public List<String> getLore() {
         return lore;
     }
-    public ItemStack getItem() { return item; }
-    public Material getMaterial() { return material; }
-    public PotionType getColor() { return color; }
+    public ItemStack getItem() {
+        return item;
+    }
+    public Material getMaterial() {
+        return material;
+    }
+    public PotionType getColor() {
+        return color;
+    }
     public int getRange() {
         return range;
     }
@@ -61,11 +69,10 @@ public class MissileObject {
     public int getSpeed() {
         return speed;
     }
-    public boolean isNuclear() {
-        return nuclear;
+    public String getId() {
+        return id;
     }
-    public void setGuiSlot(int num) { guiSlot = num;}
-    public int getGuiSlot() { return guiSlot; }
+
 
     public void launch(Player p, @Nullable Location target, Block b) {
         PlayerValuesObject pValues = RowMissiles.playerValues.get(p.getUniqueId());
@@ -123,25 +130,6 @@ public class MissileObject {
                 }
 
                 centerBomb(target, world);
-
-                if (isNuclear()) {
-                    duration = 150;
-                }
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (duration > 0) {
-                            for (Player op : Bukkit.getOnlinePlayers()) {
-                                if (!radiusCheck(op, target)) continue;
-                                op.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 200, 2));
-                                duration--;
-                            }
-                        } else {
-                            cancel();
-                        }
-                    }
-                }.runTaskTimer(RowMissiles.getInstance(), 20, 20*10);
             }
         }.runTaskLater(RowMissiles.getInstance(), 20L * (time + 5));
     }
@@ -215,7 +203,7 @@ public class MissileObject {
         }.runTaskLater(RowMissiles.getInstance(), 20*5);
     }
 
-    public static ArmorStand spawnMissile(Location loc) {
+    public ArmorStand spawnMissile(Location loc) {
         if (loc.getWorld() == null) return null;
 
         for (Entity entity : loc.getWorld().getNearbyEntities(loc, 1, 1, 1)) {
@@ -230,10 +218,25 @@ public class MissileObject {
 
         ArmorStand missileEntity = (ArmorStand) loc.getWorld().spawnEntity(loc.add(0.5, 1, 0.5), EntityType.ARMOR_STAND);
 
-        missileEntity.setHelmet(new ItemStack(Material.TNT));
-        missileEntity.setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE));
-        missileEntity.setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS));
-        missileEntity.setBoots(new ItemStack(Material.NETHERITE_BOOTS));
+        EntityEquipment armorEquipment =  missileEntity.getEquipment();
+        if (armorEquipment != null) {
+            ItemStack tnt = new ItemStack(Material.TNT);
+            armorEquipment.setHelmet(tnt);
+            armorEquipment.setItemInMainHand(tnt);
+            armorEquipment.setItemInOffHand(tnt);
+
+            armorEquipment.setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE));
+            armorEquipment.setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS));
+            armorEquipment.setBoots(new ItemStack(Material.NETHERITE_BOOTS));
+        }
+
+        missileEntity.addEquipmentLock(EquipmentSlot.HEAD, ArmorStand.LockType.REMOVING_OR_CHANGING);
+        missileEntity.addEquipmentLock(EquipmentSlot.CHEST, ArmorStand.LockType.REMOVING_OR_CHANGING);
+        missileEntity.addEquipmentLock(EquipmentSlot.LEGS, ArmorStand.LockType.REMOVING_OR_CHANGING);
+        missileEntity.addEquipmentLock(EquipmentSlot.FEET, ArmorStand.LockType.REMOVING_OR_CHANGING);
+        missileEntity.addEquipmentLock(EquipmentSlot.HAND, ArmorStand.LockType.REMOVING_OR_CHANGING);
+        missileEntity.addEquipmentLock(EquipmentSlot.OFF_HAND, ArmorStand.LockType.REMOVING_OR_CHANGING);
+
 
         missileEntity.setCollidable(false);
 
@@ -241,6 +244,9 @@ public class MissileObject {
 
         missileEntity.setCanPickupItems(false);
         missileEntity.setRemoveWhenFarAway(false);
+
+        NamespacedKey key = new NamespacedKey(RowMissiles.getInstance(), "missile");
+        missileEntity.getPersistentDataContainer().set(key, PersistentDataType.STRING, id);
 
         return missileEntity;
     }

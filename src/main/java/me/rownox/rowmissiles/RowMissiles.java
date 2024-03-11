@@ -1,12 +1,10 @@
 package me.rownox.rowmissiles;
 
 import me.rownox.rowmissiles.commands.MissileCmd;
-import me.rownox.rowmissiles.listeners.BlockBreakListener;
 import me.rownox.rowmissiles.listeners.ChatListener;
 import me.rownox.rowmissiles.listeners.InteractListener;
 import me.rownox.rowmissiles.listeners.JoinListener;
 import me.rownox.rowmissiles.objects.MissileObject;
-import me.rownox.rowmissiles.objects.OreObject;
 import me.rownox.rowmissiles.objects.PlayerValuesObject;
 import org.bukkit.Server;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -30,7 +28,6 @@ public final class RowMissiles extends JavaPlugin {
     public static RowMissiles plugin;
 
     public static HashMap<MissileObject, ShapedRecipe> missileList = new HashMap<>();
-    public static List<OreObject> oreList = new ArrayList<>();
     public static WeakHashMap<UUID, PlayerValuesObject> playerValues = new WeakHashMap<>();
 
     public static String prefix;
@@ -45,16 +42,13 @@ public final class RowMissiles extends JavaPlugin {
         loadConfigs();
 
         prefix = config.getString("prefix");
-        customMiningEnabled = config.getBoolean("custom_mining");
         broadcastEnabled = config.getBoolean("message_broadcast");
 
         plugin.getCommand("missiles").setExecutor(new MissileCmd());
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
         getServer().getPluginManager().registerEvents(new JoinListener(), this);
         getServer().getPluginManager().registerEvents(new InteractListener(), this);
-        getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
 
-        ConfigUtils.initOres();
         ConfigUtils.initMissiles();
     }
 
@@ -67,9 +61,7 @@ public final class RowMissiles extends JavaPlugin {
         }
 
         missileList.clear();
-        oreList.clear();
 
-        ConfigUtils.initOres();
         ConfigUtils.initMissiles();
     }
 
@@ -78,22 +70,15 @@ public final class RowMissiles extends JavaPlugin {
         config.options().copyDefaults(true);
         saveDefaultConfig();
 
-        oresFile = new File(getDataFolder(), "ores.yml");
         missilesFile = new File(getDataFolder(), "missiles.yml");
 
-        if (!oresFile.exists()) {
-            oresFile.getParentFile().mkdirs();
-            saveResource("ores.yml", false);
-        }
         if (!missilesFile.exists()) {
             missilesFile.getParentFile().mkdirs();
             saveResource("missiles.yml", false);
         }
 
-        oresConfig = new YamlConfiguration();
         missilesConfig = new YamlConfiguration();
         try {
-            oresConfig.load(oresFile);
             missilesConfig.load(missilesFile);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
@@ -110,10 +95,6 @@ public final class RowMissiles extends JavaPlugin {
 
     public static YamlConfiguration getMissilesConfig() {
         return missilesConfig;
-    }
-
-    public static YamlConfiguration getOresConfig() {
-        return oresConfig;
     }
 
 }

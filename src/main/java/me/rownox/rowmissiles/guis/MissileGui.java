@@ -46,15 +46,14 @@ public class MissileGui implements Listener {
             List<String> lore = List.of(
                     ChatColor.GRAY + "Range: " + missile.getRange(),
                     ChatColor.GRAY + "Radius: " + missile.getMagnitude(),
-                    ChatColor.GRAY + "Speed: " + missile.getSpeed(),
-                    ChatColor.GRAY + "Nuclear: " + missile.isNuclear()
+                    ChatColor.GRAY + "Speed: " + missile.getSpeed()
             );
 
             ItemMeta meta = shopItem.getItemMeta();
             meta.setLore(lore);
             shopItem.setItemMeta(meta);
 
-            gui.setItem(missile.getGuiSlot(), shopItem);
+            gui.setItem(1, shopItem);
         }
     }
 

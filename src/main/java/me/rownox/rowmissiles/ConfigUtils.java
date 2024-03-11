@@ -1,7 +1,6 @@
 package me.rownox.rowmissiles;
 
 import me.rownox.rowmissiles.objects.MissileObject;
-import me.rownox.rowmissiles.objects.OreObject;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,7 +17,6 @@ import java.util.List;
 public class ConfigUtils {
 
     private static final YamlConfiguration missilesConfig = RowMissiles.getMissilesConfig();
-    private static final YamlConfiguration oresConfig = RowMissiles.getOresConfig();
 
     public static void initMissiles() {
         for (String key : missilesConfig.getKeys(false)) {
@@ -28,8 +26,6 @@ public class ConfigUtils {
             int range = missilesConfig.getInt(key + ".range");
             int magnitude = missilesConfig.getInt(key + ".magnitude");
             int speed = missilesConfig.getInt(key + ".speed");
-            boolean nuclear = missilesConfig.getBoolean(key + ".nuclear");
-            int guiSlot = missilesConfig.getInt(key + ".gui_slot");
 
             PotionType potionType = PotionType.valueOf(potionTypeString.toUpperCase());
 
@@ -49,7 +45,7 @@ public class ConfigUtils {
                 String matString = parts[1];
 
                 int amount = Integer.parseInt(parts[2]);
-                ItemStack item = new ItemStack(customOreMatch(matString), amount);
+                ItemStack item = new ItemStack(Material.matchMaterial(matString), amount);
                 RecipeChoice inputChoice = new RecipeChoice.ExactChoice(item);
 
                 recipe.setIngredient(partName, inputChoice);
@@ -61,50 +57,9 @@ public class ConfigUtils {
 
             Bukkit.addRecipe(recipe);
 
-            MissileObject obj = new MissileObject(arrowItem, potionType, range, magnitude, speed, nuclear);
-            obj.setGuiSlot(guiSlot);
+            MissileObject obj = new MissileObject(arrowItem, potionType, range, magnitude, speed);
             RowMissiles.missileList.put(obj, recipe);
         }
-    }
-
-    public static void initOres() {
-        for (String key : oresConfig.getKeys(false)) {
-
-            Material blockFrom = Material.matchMaterial(oresConfig.getString(key + ".block_from"));
-            String unrefinedName = oresConfig.getString(key + ".unrefined_name");
-            Material unrefinedMat = Material.matchMaterial(oresConfig.getString(key + ".unrefined_mat"));
-            int refineDuration = oresConfig.getInt(key + ".refine_duration");
-            float experience = (float) oresConfig.getDouble(key + ".experience");
-            String refinedName = oresConfig.getString(key + ".refined_name");
-            Material refinedMat = Material.matchMaterial(oresConfig.getString(key + ".refined_mat"));
-
-            if (RowMissiles.customMiningEnabled) {
-                NamespacedKey namespacedKey = new NamespacedKey(RowMissiles.getInstance(), key);
-                RecipeChoice inputChoice = new RecipeChoice.MaterialChoice(unrefinedMat);
-
-                ItemStack refined = new ItemStack(refinedMat);
-                ItemMeta itemMeta = refined.getItemMeta();
-                itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', refinedName));
-                refined.setItemMeta(itemMeta);
-
-                FurnaceRecipe recipe = new FurnaceRecipe(namespacedKey, new ItemStack(refined), inputChoice, experience, 20*refineDuration);
-
-                if (Bukkit.getRecipe(namespacedKey) != null) {
-                    Bukkit.removeRecipe(namespacedKey);
-                }
-
-                Bukkit.addRecipe(recipe);
-            }
-
-            RowMissiles.oreList.add(new OreObject(blockFrom, unrefinedName, unrefinedMat, refinedName, refinedMat));
-        }
-    }
-
-    private static Material customOreMatch(String matString) {
-        for (OreObject ore : RowMissiles.oreList) {
-            if (ore.getRefinedName().equalsIgnoreCase(matString)) return ore.getRefinedMat();
-        }
-        return Material.matchMaterial(matString);
     }
 
     public static ItemStack missileItem(String name, PotionType type) {

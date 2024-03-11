@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +17,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 public class InteractListener implements Listener {
     @EventHandler
@@ -42,14 +44,14 @@ public class InteractListener implements Listener {
 
                         Block blockUnder = b.getLocation().subtract(0, 1, 0).getBlock();
                         if (blockUnder.getType().equals(Material.LAVA_CAULDRON)) {
-                            new MissileObject(MM.getItem(), MM.getColor(), MM.getRange(), MM.getMagnitude(), MM.getSpeed(), MM.isNuclear()).launch(p, pValues.getTargetLoc(), blockUnder);
+                            new MissileObject(MM.getItem(), MM.getColor(), MM.getRange(), MM.getMagnitude(), MM.getSpeed()).launch(p, pValues.getTargetLoc(), blockUnder);
                         } else {
                             p.sendMessage(ChatColor.translateAlternateColorCodes('&', RowMissiles.prefix + "&eFuel the launcher by placing a lava cauldron underneath the dispenser."));
                         }
                     }
                     return;
                 }
-                MissileObject.spawnMissile(b.getLocation());
+                MM.spawnMissile(b.getLocation());
                 if (p.getGameMode() == GameMode.SURVIVAL)
                     p.getInventory().getItemInMainHand().setAmount(item.getAmount() - 1);
             }
@@ -57,24 +59,40 @@ public class InteractListener implements Listener {
 
     }
 
-    private boolean isMissileArmorStand(ArmorStand armorStand) {
-        ItemStack item = new ItemStack(Material.TNT);
-        return armorStand.getHelmet().equals(item);
+    private String isMissileArmorStand(ArmorStand armorStand) {
+        NamespacedKey key = new NamespacedKey(RowMissiles.getInstance(), "missile");
+
+        return armorStand.getPersistentDataContainer().get(key, PersistentDataType.STRING);
     }
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (event.getRightClicked() instanceof ArmorStand) {
-            ArmorStand armorStand = (ArmorStand) event.getRightClicked();
+        Entity entity = event.getRightClicked();
+        Player p = event.getPlayer();
 
-            // Check if the armor stand is a missile (customize this condition based on your setup)
-            if (isMissileArmorStand(armorStand)) {
+        if (entity instanceof ArmorStand) {
+
+            String missileKey = isMissileArmorStand((ArmorStand) entity);
+
+            if (missileKey != null) {
                 if (event.getPlayer().isSneaking()) {
-                    armorStand.getWorld().spawnParticle(Particle.SMOKE_LARGE, armorStand.getLocation(), 5, 0.2, 0.2, 0.2, 0);
-                    armorStand.remove();
+                    MissileObject missile = matchMissileId(missileKey);
+                    if (missile == null) return;
+
+                    entity.getWorld().spawnParticle(Particle.SMOKE_LARGE, entity.getLocation(), 5, 0.2, 0.2, 0.2, 0);
+                    p.getInventory().addItem(missile.getItem());
+                    entity.remove();
                 }
-                event.setCancelled(true);
             }
         }
+    }
+
+    private MissileObject matchMissileId(String id) {
+        for (MissileObject MM : RowMissiles.missileList.keySet()) {
+            if (MM.getId().equalsIgnoreCase(id)) {
+                return MM;
+            }
+        }
+        return null;
     }
 }
