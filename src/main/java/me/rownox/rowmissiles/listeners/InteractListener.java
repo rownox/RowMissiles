@@ -51,48 +51,7 @@ public class InteractListener implements Listener {
                     }
                     return;
                 }
-                MM.spawnMissile(b.getLocation());
-                if (p.getGameMode() == GameMode.SURVIVAL)
-                    p.getInventory().getItemInMainHand().setAmount(item.getAmount() - 1);
             }
         }
-
-    }
-
-    private String isMissileArmorStand(ArmorStand armorStand) {
-        NamespacedKey key = new NamespacedKey(RowMissiles.getInstance(), "missile");
-
-        return armorStand.getPersistentDataContainer().get(key, PersistentDataType.STRING);
-    }
-
-    @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        Entity entity = event.getRightClicked();
-        Player p = event.getPlayer();
-
-        if (entity instanceof ArmorStand) {
-
-            String missileKey = isMissileArmorStand((ArmorStand) entity);
-
-            if (missileKey != null) {
-                if (event.getPlayer().isSneaking()) {
-                    MissileObject missile = matchMissileId(missileKey);
-                    if (missile == null) return;
-
-                    entity.getWorld().spawnParticle(Particle.SMOKE_LARGE, entity.getLocation(), 5, 0.2, 0.2, 0.2, 0);
-                    p.getInventory().addItem(missile.getItem());
-                    entity.remove();
-                }
-            }
-        }
-    }
-
-    private MissileObject matchMissileId(String id) {
-        for (MissileObject MM : RowMissiles.missileList.keySet()) {
-            if (MM.getId().equalsIgnoreCase(id)) {
-                return MM;
-            }
-        }
-        return null;
     }
 }

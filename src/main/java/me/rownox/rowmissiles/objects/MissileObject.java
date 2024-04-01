@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -89,7 +90,10 @@ public class MissileObject {
             b.setType(Material.CAULDRON);
             pValues.setReadyToLaunch(false);
 
-            p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
+            if (p.getGameMode() == GameMode.SURVIVAL) {
+                p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
+            }
+
 
             shootMissile(b.getLocation());
             land(p, target);
@@ -180,74 +184,29 @@ public class MissileObject {
     }
 
     private void shootMissile(Location loc) {
-        ArmorStand missileEntity = spawnMissile(loc);
-        if (missileEntity == null) return;
-        Location bottomLocation = missileEntity.getLocation().subtract(0, 1, 0);
-        Vector vector = new Vector(0, 1, 0).multiply(1);
 
-        new BukkitRunnable() {
+        World world = loc.getWorld();
+
+        if (world == null) return;
+        TNTPrimed tntMissile = (TNTPrimed) world.spawnEntity(loc.add(0, 2, 0), EntityType.PRIMED_TNT);
+        Vector vector = new Vector(0, 1, 0).multiply(1.5);
+
+        BukkitTask particleTask = new BukkitRunnable() {
             @Override
             public void run() {
-                missileEntity.setVelocity(vector);
-                missileEntity.getWorld().spawnParticle(Particle.FLAME, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
-                missileEntity.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
-                missileEntity.getWorld().spawnParticle(Particle.SMOKE_LARGE, bottomLocation, 5, 0.2, 0.2, 0.2, 0);
+                tntMissile.setVelocity(vector);
+                world.spawnParticle(Particle.FLAME, tntMissile.getLocation(), 5, 0.2, 0.2, 0.2, 0);
+                world.spawnParticle(Particle.EXPLOSION_LARGE, tntMissile.getLocation(), 5, 0.2, 0.2, 0.2, 0);
+                world.spawnParticle(Particle.SMOKE_LARGE, tntMissile.getLocation(), 5, 0.2, 0.2, 0.2, 0);
             }
         }.runTaskTimer(RowMissiles.getInstance(), 0, 2);
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                missileEntity.remove();
+                tntMissile.remove();
+                particleTask.cancel();
             }
-        }.runTaskLater(RowMissiles.getInstance(), 20*5);
-    }
-
-    public ArmorStand spawnMissile(Location loc) {
-        if (loc.getWorld() == null) return null;
-
-        for (Entity entity : loc.getWorld().getNearbyEntities(loc, 1, 1, 1)) {
-            if (entity instanceof LivingEntity) {
-                return null;
-            }
-        }
-
-        if (!loc.getBlock().isEmpty()) {
-            return null;
-        }
-
-        ArmorStand missileEntity = (ArmorStand) loc.getWorld().spawnEntity(loc.add(0.5, 1, 0.5), EntityType.ARMOR_STAND);
-
-        EntityEquipment armorEquipment =  missileEntity.getEquipment();
-        if (armorEquipment != null) {
-            ItemStack tnt = new ItemStack(Material.TNT);
-            armorEquipment.setHelmet(tnt);
-            armorEquipment.setItemInMainHand(tnt);
-            armorEquipment.setItemInOffHand(tnt);
-
-            armorEquipment.setChestplate(new ItemStack(Material.NETHERITE_CHESTPLATE));
-            armorEquipment.setLeggings(new ItemStack(Material.NETHERITE_LEGGINGS));
-            armorEquipment.setBoots(new ItemStack(Material.NETHERITE_BOOTS));
-        }
-
-        missileEntity.addEquipmentLock(EquipmentSlot.HEAD, ArmorStand.LockType.REMOVING_OR_CHANGING);
-        missileEntity.addEquipmentLock(EquipmentSlot.CHEST, ArmorStand.LockType.REMOVING_OR_CHANGING);
-        missileEntity.addEquipmentLock(EquipmentSlot.LEGS, ArmorStand.LockType.REMOVING_OR_CHANGING);
-        missileEntity.addEquipmentLock(EquipmentSlot.FEET, ArmorStand.LockType.REMOVING_OR_CHANGING);
-        missileEntity.addEquipmentLock(EquipmentSlot.HAND, ArmorStand.LockType.REMOVING_OR_CHANGING);
-        missileEntity.addEquipmentLock(EquipmentSlot.OFF_HAND, ArmorStand.LockType.REMOVING_OR_CHANGING);
-
-
-        missileEntity.setCollidable(false);
-
-        missileEntity.setBasePlate(false);
-
-        missileEntity.setCanPickupItems(false);
-        missileEntity.setRemoveWhenFarAway(false);
-
-        NamespacedKey key = new NamespacedKey(RowMissiles.getInstance(), "missile");
-        missileEntity.getPersistentDataContainer().set(key, PersistentDataType.STRING, id);
-
-        return missileEntity;
+        }.runTaskLater(RowMissiles.getInstance(), 20*3);
     }
 }

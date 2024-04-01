@@ -17,6 +17,12 @@ public class ChatListener implements Listener {
         Player p = e.getPlayer();
         PlayerValuesObject pValues = RowMissiles.playerValues.get(p.getUniqueId());
 
+        if (pValues == null) {
+            RowMissiles.playerValues.put(p.getUniqueId(), new PlayerValuesObject());
+        }
+
+        pValues = RowMissiles.playerValues.get(p.getUniqueId());
+
         if (pValues.isSettingLocation()) {
 
             for (MissileObject missile : RowMissiles.missileList.keySet()) {
