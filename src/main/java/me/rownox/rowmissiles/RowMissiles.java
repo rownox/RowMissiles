@@ -21,17 +21,13 @@ import java.util.*;
 public final class RowMissiles extends JavaPlugin {
 
     private static File missilesFile;
-    private static File oresFile;
     private static YamlConfiguration missilesConfig;
-    private static YamlConfiguration oresConfig;
     public static FileConfiguration config;
     public static RowMissiles plugin;
 
     public static HashMap<MissileObject, ShapedRecipe> missileList = new HashMap<>();
-    public static WeakHashMap<UUID, PlayerValuesObject> playerValues = new WeakHashMap<>();
-
+    public static HashMap<UUID, PlayerValuesObject> playerValues = new HashMap<>();
     public static String prefix;
-    public static boolean customMiningEnabled;
     public static boolean broadcastEnabled;
 
     @Override
@@ -55,7 +51,6 @@ public final class RowMissiles extends JavaPlugin {
     public static void reloadConfigs() {
         try {
             missilesConfig.load(missilesFile);
-            oresConfig.load(oresFile);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
