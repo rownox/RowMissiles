@@ -81,10 +81,10 @@ public class MissileObject {
         if (pValues.isReadyToLaunch()) {
             if (RowMissiles.broadcastEnabled) {
                 for (Player op : Bukkit.getOnlinePlayers()) {
-                    broadcastLaunch(op, p.getLocation());
+                    broadcastLaunch(op, p, target);
                 }
             } else {
-                broadcastLaunch(p, p.getLocation());
+                broadcastLaunch(p, p, target);
             }
 
             b.setType(Material.CAULDRON);
@@ -178,10 +178,12 @@ public class MissileObject {
         p.playSound(p.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2, 1);
     }
 
-    private void broadcastLaunch(Player p, Location loc) {
+    private void broadcastLaunch(Player p, Player sender, Location target) {
         p.sendMessage(ChatColor
                 .translateAlternateColorCodes('&',
-                        RowMissiles.prefix + "&b&lA " + name + " &b&lmissile was launched from X:" + (int) loc.getX() + " Y:" + (int) loc.getZ()));
+                        RowMissiles.prefix + "&b&l" + p.getName() + " launched a " + name
+                                + " &b&lmissile from X:" + (int) sender.getLocation().getX() + " Y:" + (int) sender.getLocation().getZ()
+                                + " bound to hit X:" + (int) target.getX() + " Y:" + (int) target.getZ()));
         p.playSound(p.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 2, 1);
     }
 
