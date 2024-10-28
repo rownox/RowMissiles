@@ -181,7 +181,7 @@ public class MissileObject {
     private void broadcastLaunch(Player p, Player sender, Location target) {
         p.sendMessage(ChatColor
                 .translateAlternateColorCodes('&',
-                        RowMissiles.prefix + "&b&l" + p.getName() + " launched a " + name
+                        RowMissiles.prefix + "&b&l" + sender.getName() + " launched a " + name
                                 + " &b&lmissile from X:" + (int) sender.getLocation().getX() + " Y:" + (int) sender.getLocation().getZ()
                                 + " bound to hit X:" + (int) target.getX() + " Y:" + (int) target.getZ()));
         p.playSound(p.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 2, 1);
